@@ -2,6 +2,5 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
-import voucher
-import main
-import clicommands
+import voucher.voucher as voucher
+import cli.clicommands as clicommands

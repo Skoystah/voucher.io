@@ -1,38 +1,41 @@
-from typing import Callable, Dict
+from typing import Dict
+import config
+import cli.handlers.exit as exit
+import cli.handlers.help as help
+import cli.handlers.voucher as voucher
 
-import repl
 
 class CliCommand():
-    def __init__(self, name: str, description: str, callback: Callable[...,None]) -> None:
+    def __init__(self, name: str, description: str, handler_class: type) -> None:
         self.__name = name
         self.__description = description
-        self.__callback = callback
+        self.__handler_class = handler_class
 
-    @property
-    def callback(self):
-        return self.__callback
+    def create_handler(self, config: config.Config):
+        return self.__handler_class(config)
+
 
 def get_commands() -> Dict[str, CliCommand]:
     return {
             "help": CliCommand(
                 name= "help",
                 description= "show all available commands",
-                callback=repl.handle_help
+                handler_class=help.HelpHandler
                 ),
             "exit": CliCommand(
                 name= "exit",
                 description= "exit program",
-                callback=repl.handle_exit
+                handler_class=exit.ExitHandler
                 ),
             "add": CliCommand(
                 name= "add",
                 description= "add parking voucher",
-                callback=repl.handle_add_voucher
+                handler_class=voucher.AddVoucherHandler
                 ),
             "list": CliCommand(
                 name= "list",
                 description= "list all parking vouchers",
-                callback=repl.handle_list_voucher
+                handler_class=voucher.ListVoucherHandler
                 ),
             }
             

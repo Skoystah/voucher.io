@@ -23,7 +23,7 @@ class Voucher():
         self.__used = used
 
     def __repr__(self) -> str:
-        return f'Voucher: code = {self.__code} | duration = {self.__duration} | used = {self.__used}'
+        return f'code = {self.__code} | duration = {self.__duration} | used = {self.__used}'
     
 class VoucherDB():
     # needed?

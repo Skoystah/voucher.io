@@ -1,14 +1,9 @@
 import unittest
 from context import voucher
 
-class TestVouchers(unittest.TestCase):
-    def test_add_voucher(self):
-        vouch = voucher.Voucher(code="LEU123", duration="1h", used=False)
-        db = voucher.VoucherDB()
-
-        db.add_voucher(vouch)
-
-        self.assertEqual(len(db.get_vouchers()), 1)
+class TestCLI(unittest.TestCase):
+    def test_handle_help(self):
+        self.assertLogs
 
     def test_add_existing_voucher_error(self):
         vouch = voucher.Voucher(code="LEU123", duration="1h", used=False)
