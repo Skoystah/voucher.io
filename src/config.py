@@ -1,4 +1,4 @@
-import voucher.voucher as voucher
+import voucher.models as voucher
 
 class Config():
     def __init__(self, db: voucher.VoucherDB) -> None:

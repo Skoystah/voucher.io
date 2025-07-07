@@ -1,10 +1,7 @@
 import cli.handlers.base as base
-import config
-import voucher.voucher as voucher
+import voucher.models as voucher
 
 class ListVoucherHandler(base.BaseHandler):
-    def __init__(self, config: config.Config) -> None:
-        super().__init__(config)
 
     def handle(self, *args):
         vouchers = self._config.db.get_vouchers()
@@ -19,8 +16,6 @@ class ListVoucherHandler(base.BaseHandler):
 
 
 class AddVoucherHandler(base.BaseHandler):
-    def __init__(self, config: config.Config) -> None:
-        super().__init__(config)
 
     def handle(self, *args):
         print("Add voucher code:")
@@ -51,6 +46,23 @@ class AddVoucherHandler(base.BaseHandler):
                 duration=duration, 
                 used=False
                 )
-        self._config.db.add_voucher(new_voucher)
-        print(f"Added voucher {new_voucher}")
+        try:
+            self._config.db.add_voucher(new_voucher)
+            print(f"Added voucher {new_voucher}")
+        except Exception as e:
+            print(f"Error - {e}")
+
+class UseVoucherHandler(base.BaseHandler):
+
+    def handle(self, *args):
+        if len(args) == 0:
+            print("Voucher code required")
+            return
+
+        code = args[0]
+
+        try:
+            self._config.db.use_voucher(code)
+        except Exception as e:
+            print(f"Error - {e}")
 

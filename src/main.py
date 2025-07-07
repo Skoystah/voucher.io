@@ -1,5 +1,5 @@
 import cli.repl as repl
-import voucher.voucher as voucher
+import voucher.models as voucher
 import config
 
 def main():
