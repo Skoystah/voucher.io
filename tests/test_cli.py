@@ -1,9 +1,13 @@
 import unittest
-from context import voucher
+from context import handle_help, handle_exit, handle_base, handle_voucher
+from src.cli.handlers.help import HelpHandler
+from src.config import Config
+from src.voucher.models import VoucherDB
 
 class TestCLI(unittest.TestCase):
     def test_handle_help(self):
-        self.assertLogs
+        config = Config(VoucherDB()) 
+        handler = HelpHandler(config)
 
     def test_add_existing_voucher_error(self):
         vouch = voucher.Voucher(code="LEU123", duration="1h", used=False)

@@ -62,7 +62,7 @@ class UseVoucherHandler(base.BaseHandler):
         code = args[0]
 
         try:
-            self._config.db.use_voucher(code)
+            self._config.db.use_voucher(code.upper())
         except Exception as e:
             print(f"Error - {e}")
 

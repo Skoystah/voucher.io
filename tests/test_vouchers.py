@@ -1,10 +1,19 @@
 import unittest
 from voucher.models import Voucher, VoucherDB
+from voucher.db import DB
 
 class TestVouchers(unittest.TestCase):
+    def setUp(self) -> None:
+        self.db = DB(":memory:")
+        with open("create_db_001","r") as f:
+            self.db.cur.executescript(f.read())
+
+    def tearDown(self) -> None:
+        self.db.connection.close()
+
     def test_add_voucher(self):
         vouch = Voucher(code="LEU123", duration="1h", used=False)
-        db = VoucherDB()
+        db = VoucherDB(":memory:")
 
         db.add_voucher(vouch)
 
@@ -81,7 +90,6 @@ class TestVouchers(unittest.TestCase):
         db.add_voucher(vouch)
 
         db.use_voucher(vouch.code)
-        
         self.assertEqual(db.get_voucher(vouch.code).used, True)
         
 

@@ -38,9 +38,9 @@ def get_commands() -> Dict[str, CliCommand]:
                 handler_class=voucher.ListVoucherHandler
                 ),
             "use": CliCommand(
-                name= "use",
-                description= "use parking voucher with given code",
-                handler_class=voucher.UseVoucherHandler
+                name= "list",
+                description= "list all parking vouchers",
+                handler_class=voucher.ListVoucherHandler
                 ),
             }
             
