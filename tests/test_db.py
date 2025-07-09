@@ -1,16 +1,10 @@
 import unittest
-from voucher.db import DB, AddVoucherParams, GetVoucherParams, GetVoucherRow
+from base import BaseTestClass
+from voucher.db import AddVoucherParams, GetVoucherParams, GetVoucherRow
 from voucher.models import Voucher
 
 
-class TestDB(unittest.TestCase):
-    def setUp(self) -> None:
-        self.db = DB(":memory:")
-        with open("create_db_001","r") as f:
-            self.db.cur.executescript(f.read())
-
-    def tearDown(self) -> None:
-        self.db.connection.close()
+class TestDB(BaseTestClass):
 
     def test_add_voucher(self):
 

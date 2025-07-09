@@ -1,10 +1,11 @@
 import os
 import unittest
+from base import BaseTestClass
 from voucher.models import Voucher, VoucherDB
 from voucher.db import DB
 from config import Config
 
-class TestVouchers(unittest.TestCase):
+class TestVouchers(BaseTestClass):
 
     def setUp(self) -> None:
         self.config = Config(db="test_voucher.db")
