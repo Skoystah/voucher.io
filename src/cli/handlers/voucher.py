@@ -1,10 +1,14 @@
 import cli.handlers.base as base
-import voucher.models as voucher
+from config import Config
+from voucher.models import Voucher, VoucherDB
 
 class ListVoucherHandler(base.BaseHandler):
 
-    def handle(self, *args):
-        vouchers = self._config.db.get_vouchers()
+    def handle(self, config: Config, *args):
+        voucherDB = VoucherDB(config)
+
+        #todo add arguments
+        vouchers = voucherDB.get_vouchers()
 
         if len(vouchers) == 0:
             print("No vouchers available")
@@ -17,7 +21,7 @@ class ListVoucherHandler(base.BaseHandler):
 
 class AddVoucherHandler(base.BaseHandler):
 
-    def handle(self, *args):
+    def handle(self, config: Config, *args):
         print("Add voucher code:")
         code = input()
         #TO-DO - input validation on code
@@ -41,28 +45,31 @@ class AddVoucherHandler(base.BaseHandler):
             case default:
                 duration = "1h"
 
-        new_voucher = voucher.Voucher(
+        voucherDB = VoucherDB(config)
+
+        new_voucher = Voucher(
                 code=code, 
                 duration=duration, 
                 used=False
                 )
         try:
-            self._config.db.add_voucher(new_voucher)
+            voucherDB.add_voucher(new_voucher)
             print(f"Added voucher {new_voucher}")
         except Exception as e:
             print(f"Error - {e}")
 
 class UseVoucherHandler(base.BaseHandler):
 
-    def handle(self, *args):
+    def handle(self, config: Config, *args):
         if len(args) == 0:
             print("Voucher code required")
             return
 
         code = args[0]
+        voucherDB = VoucherDB(config)
 
         try:
-            self._config.db.use_voucher(code.upper())
+            voucherDB.use_voucher(code.upper())
         except Exception as e:
             print(f"Error - {e}")
 

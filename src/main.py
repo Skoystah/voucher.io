@@ -1,10 +1,12 @@
 import cli.repl as repl
-import voucher.models as voucher
-import config
+from config import Config
 
 def main():
-    repl.start(config.Config(voucher.VoucherDB())
-)    
+    
+    #todo - use config file?
+    config = Config(db="voucher.db")
+    print("config db", config.db)
+    repl.start(config)
 
 if __name__ == "__main__":
     main()

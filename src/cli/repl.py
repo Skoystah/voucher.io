@@ -1,7 +1,7 @@
 import cli.clicommands as clicommands
-import config
+from config import Config
 
-def start(config: config.Config):
+def start(config: Config):
 
     commands = clicommands.get_commands()
 
@@ -16,10 +16,10 @@ def start(config: config.Config):
         args = []
         if len(ipt) > 1:
             args = ipt[1:]
-
+        
         if command in commands:
-            handler = commands[command].create_handler(config)
-            handler.handle(*args)
+            handler = commands[command].create_handler()
+            handler.handle(config, args)
         else:
             print("command unknown")
         continue

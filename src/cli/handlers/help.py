@@ -1,11 +1,8 @@
 import cli.handlers.base as base
-import config
+from config import Config
 
 class HelpHandler(base.BaseHandler):
-    def __init__(self, config: config.Config) -> None:
-        super().__init__(config)
-
-    def handle(self, *args):
+    def handle(self, config: Config, *args):
         #TO-DO - do this flexibly based on the commands - pass to *args?
         print(
     """Available commands:

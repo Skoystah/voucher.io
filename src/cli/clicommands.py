@@ -7,13 +7,12 @@ import cli.handlers.voucher as voucher
 
 class CliCommand():
     def __init__(self, name: str, description: str, handler_class: type) -> None:
-        self.__name = name
-        self.__description = description
-        self.__handler_class = handler_class
+        self.name = name
+        self.description = description
+        self.handler_class = handler_class
 
-    def create_handler(self, config: config.Config):
-        return self.__handler_class(config)
-
+    def create_handler(self):
+        return self.handler_class()
 
 def get_commands() -> Dict[str, CliCommand]:
     return {

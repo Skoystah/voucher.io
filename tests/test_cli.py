@@ -1,10 +1,22 @@
 import unittest
-from context import handle_help, handle_exit, handle_base, handle_voucher
-from src.cli.handlers.help import HelpHandler
-from src.config import Config
-from src.voucher.models import VoucherDB
+import os
+from cli.handlers.help import HelpHandler
+from cli.handlers.exit import ExitHandler
+from cli.handlers.voucher import ListVoucherHandler, AddVoucherHandler, UseVoucherHandler
+from config import Config
+from voucher.models import VoucherDB
 
 class TestCLI(unittest.TestCase):
+    def setUp(self) -> None:
+        self.config = Config(db="test_voucher.db")
+        self.db = DB("test_voucher.db")
+        with open("create_db_001","r") as f:
+            self.db.cur.executescript(f.read())
+
+    def tearDown(self) -> None:
+        self.db.connection.close()
+        os.remove("test_voucher.db")
+
     def test_handle_help(self):
         config = Config(VoucherDB()) 
         handler = HelpHandler(config)

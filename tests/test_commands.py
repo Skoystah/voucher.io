@@ -1,10 +1,13 @@
 import unittest
-from context import command
+from cli import clicommands
 
 class TestCommands(unittest.TestCase):
     def test_get_commands(self):
         
-        commands = command.get_commands()
+        commands = clicommands.get_commands()
 
         self.assertIsInstance(commands, dict)
+
+if __name__ == "__main__":
+    unittest.main()
 

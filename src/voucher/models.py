@@ -1,4 +1,5 @@
 from typing import List, Optional
+from config import Config
 import voucher.db as db
 
 class Voucher():
@@ -7,18 +8,20 @@ class Voucher():
         self.duration = duration
         self.used = used
 
+    def __eq__(self, other) -> bool:
+        return (
+                self.code == other.code and
+                self.duration == other.duration and
+                self.used == other.used
+                )
+
     def __repr__(self) -> str:
         return f'code = {self.code} | duration = {self.duration} | used = {self.used}'
 
     
 class VoucherDB():
-    def __init__(self, db_name: Optional[str] = None) -> None:
-        # TODO cleaner way for this??        
-        if db_name:
-            self.db = db.DB(db_name)
-        else:
-            self.db = db.DB()
-
+    def __init__(self, config: Config) -> None:
+        self.db = db.DB(config.db)
 
     def add_voucher(self, voucher: Voucher) -> None:
         self.db.add_voucher(db.AddVoucherParams

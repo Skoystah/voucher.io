@@ -1,8 +1,7 @@
-import config
+from config import Config
+
 
 class BaseHandler():
-    def __init__(self, config: config.Config) -> None:
-        self._config = config
-
-    def handle(self, *args):
+    def handle(self, config: Config, *args):
         pass
+
