@@ -7,17 +7,6 @@ from config import Config
 
 class TestVouchers(BaseTestClass):
 
-    def setUp(self) -> None:
-        self.config = Config(db="test_voucher.db")
-        self.db = DB("test_voucher.db")
-        with open("create_db_001","r") as f:
-            self.db.cur.executescript(f.read())
-
-    def tearDown(self) -> None:
-        self.db.connection.close()
-        os.remove("test_voucher.db")
-        
-
     def test_add_voucher(self):
         vouch = Voucher(code="LEU123", duration="1h")
         voucherDB = VoucherDB(self.config)

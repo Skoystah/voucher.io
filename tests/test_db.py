@@ -16,8 +16,8 @@ class TestDB(BaseTestClass):
                                )
                               )
 
-        self.db.cur.execute("SELECT * from voucher")
-        added_voucher = self.db.cur.fetchone()
+        res = self.db.connection.execute("SELECT * from voucher")
+        added_voucher = res.fetchone()
         self.assertEqual((added_voucher["code"], added_voucher["duration"], added_voucher["used"]),
                          (voucher.code, voucher.duration, False))
 

@@ -8,8 +8,8 @@ class BaseTestClass(unittest.TestCase):
     def setUp(self) -> None:
         self.config = Config(db="test_voucher.db")
         self.db = DB("test_voucher.db")
-        with open("create_db_001","r") as f:
-            self.db.cur.executescript(f.read())
+        with open("sql/create_db_001","r") as f:
+            self.db.connection.executescript(f.read())
 
     def tearDown(self) -> None:
         self.db.connection.close()

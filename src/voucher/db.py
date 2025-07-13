@@ -29,19 +29,18 @@ class DB():
     def __init__(self, db: str="voucher.db") -> None:
         self.connection = sqlite3.connect(db)
         self.connection.row_factory = sqlite3.Row
-        self.cur = self.connection.cursor()
 
 
     def add_voucher(self, voucher: AddVoucherParams) -> None:
         data = (voucher.code, voucher.duration)
         try:
             with self.connection:
-                self.cur.execute("INSERT INTO voucher (code, duration) VALUES (?, ?)",data)
+                self.connection.execute("INSERT INTO voucher (code, duration) VALUES (?, ?)",data)
         except sqlite3.IntegrityError:
             raise KeyError("Voucher already exists")
 
     def get_voucher(self, code: str) -> GetVoucherRow:
-        res = self.cur.execute("SELECT * FROM voucher WHERE code = ?", (code,))
+        res = self.connection.execute("SELECT * FROM voucher WHERE code = ?", (code,))
         row = res.fetchone()
 
         if row is None:
@@ -67,7 +66,7 @@ class DB():
         if len(args) > 0:
             query += " WHERE" + " AND".join(args)
 
-        res = self.cur.execute(query, para)
+        res = self.connection.execute(query, para)
 
         for row in res:
             vouchers.append(
@@ -82,7 +81,7 @@ class DB():
     def use_voucher(self, code: str) -> None:
         try:
             with self.connection:
-                self.cur.execute("UPDATE voucher SET used = 1 WHERE code = ?", (code,))
+                self.connection.execute("UPDATE voucher SET used = 1 WHERE code = ?", (code,))
         except sqlite3.DatabaseError:
             raise ValueError("Voucher not found")
 
