@@ -5,7 +5,6 @@ from voucher.models import Voucher
 from web.handlers.voucher import get_vouchers, add_voucher, use_voucher
 from config import Config
 import json
-import logging
 
 def custom_encode_json(o: Any) -> Dict[str, Any]:
     if isinstance(o, Voucher):
