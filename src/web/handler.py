@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 import http.server
 from http import HTTPStatus
 from voucher.models import Voucher
@@ -36,26 +36,44 @@ def create_handler(config: Config):
                     self.handle_add_voucher()
 
         def do_PUT(self) -> None:
-            path = self.path.split('/')
+            path = self.extract_path()
             self.log_message(f'PUT path {self.path} || {path}')
             
-            #path split returns also space before the '/'
-            match path[1]:
-                case "/vouchers":
-                    case 
-                    self.log_message(f'using voucher ')
-                    self.handle_use_voucher()
+            if len(path) == 0:
+                self.send_error(HTTPStatus.NOT_FOUND, "Not implemented - come back again later")
+                return None
+
+            match path[0]:
+                case "vouchers":
+                    if len(path) > 1:
+                        if path[1] > ' ':
+                            self.log_message(f'using voucher ')
+                            self.handle_use_voucher(path[1])
+                            return None
+                        else:
+                            self.send_error(HTTPStatus.NOT_FOUND, "Not implemented - come back again later")
+                            return None
+
+                    if len(path) > 2:
+                        self.send_error(HTTPStatus.NOT_FOUND, "Not implemented - come back again later")
+                        return None
+
                 case default:
                     self.send_error(HTTPStatus.NOT_FOUND, "Not implemented - come back again later")
 
-        def handle_get_vouchers(self) -> None:
-            self.send_response(HTTPStatus.OK)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
+        def extract_path(self) -> List[str]:
+            return self.path.split('/')[1:]
 
-            vouchers = get_vouchers(config)
-            body = json.dumps(vouchers, default=custom_encode_json).encode()
-            self.wfile.write(body)
+        def handle_get_vouchers(self) -> None:
+            try:
+                vouchers = get_vouchers(config)
+                body = json.dumps(vouchers, default=custom_encode_json).encode()
+                self.wfile.write(body)
+                self.send_response(HTTPStatus.OK)
+                self.send_header("Content-type", "application/json")
+                self.end_headers()
+            except Exception as e:
+                self.send_error(HTTPStatus.BAD_REQUEST, f"Voucher could not be entered: {e}")
 
         def handle_add_voucher(self) -> None:
             # Using read() keeps reading forever - read1() reads only whats there(?)
@@ -69,16 +87,15 @@ def create_handler(config: Config):
                 self.end_headers()
                 body = json.dumps(voucher, default=custom_encode_json).encode()
                 self.wfile.write(body)
-            # Question : should all errors be handled ? Revisit error handling in Python
+            # Question : should all errors be handled ? Revisit error handling in Python. what if different errors?
             except KeyError as e:
                 self.send_error(HTTPStatus.CONFLICT, f"Voucher could not be entered: {e}")
 
-        def handle_use_voucher(self) -> None:
-            data = self.rfile.read1()
-            para = json.loads(data)
+        def handle_use_voucher(self, code: str) -> None:
+            self.log_message(f"using voucher with para: {code}")
 
             try:
-                use_voucher(config, para)
+                use_voucher(config, code)
                 self.send_response(HTTPStatus.OK)
                 self.end_headers()
             except Exception as e:

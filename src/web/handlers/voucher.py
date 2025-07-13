@@ -27,10 +27,9 @@ def add_voucher(config: Config, para: Dict[str, Any]) -> Voucher:
 
     return voucher
     
-def use_voucher(config: Config, para: Dict[str, Any]) -> None:
+def use_voucher(config: Config, code) -> None:
     voucherDB = VoucherDB(config)
-
-    code = para['code']
+    print(voucherDB.get_voucher(code))
     voucherDB.use_voucher(code)
 
 # class AddVoucherHandler(base.BaseHandler):

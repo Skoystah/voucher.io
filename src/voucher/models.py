@@ -30,7 +30,7 @@ class VoucherDB():
                                )
                               )
 
-    def get_voucher(self, code) -> Voucher:
+    def get_voucher(self, code: str) -> Voucher:
         row = self.db.get_voucher(code)
         return Voucher(
                 code= row.code,
@@ -55,7 +55,7 @@ class VoucherDB():
                             )
         return vouchers
 
-    def use_voucher(self, code) -> None:
-        self.db.use_voucher(code)   
+    def use_voucher(self, code: str) -> None:
+        self.db.use_voucher(code.upper())   
 
 
