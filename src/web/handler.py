@@ -1,29 +1,14 @@
-from typing import Any, Dict, List
+from typing import List
 import http.server
 from http import HTTPStatus
-from voucher.models import Voucher
 from web.handlers.voucher import get_vouchers, add_voucher, use_voucher
 from config import Config
 import json
+from web.jsonhelper import custom_decode_json, custom_encode_json
 
-def custom_encode_json(o: Any) -> Dict[str, Any]:
-    if isinstance(o, Voucher):
-        return {'code': o.code, 'duration': o.duration, 'used': o.used}
-    raise TypeError(f'Cannot deserialize object of {type(o)}')
-
-def custom_decode_json(d: Dict[str, Any]) -> Any:
-    if "__voucher__" in d:
-        # what if a value is not filled out ?? e.g. used for a new voucher
-        return Voucher(d['code'], d['duration'], d['used'])
-    return d
-
-
-    
 def create_handler(config: Config):
     class HTTPVoucherHandler(http.server.BaseHTTPRequestHandler):
-        timeout = 2
         def do_GET(self) -> None:
-            self.log_message(f'path {self.path}')
             match self.path:
                 case "/vouchers":
                     self.handle_get_vouchers()
@@ -66,12 +51,17 @@ def create_handler(config: Config):
 
         def handle_get_vouchers(self) -> None:
             try:
+                #retrieve vouchers
                 vouchers = get_vouchers(config)
-                body = json.dumps(vouchers, default=custom_encode_json).encode()
-                self.wfile.write(body)
+
+                #create response header
                 self.send_response(HTTPStatus.OK)
                 self.send_header("Content-type", "application/json")
                 self.end_headers()
+
+                #create response body
+                body = json.dumps(vouchers, default=custom_encode_json).encode()
+                self.wfile.write(body)
             except Exception as e:
                 self.send_error(HTTPStatus.BAD_REQUEST, f"Voucher could not be entered: {e}")
 
@@ -79,6 +69,7 @@ def create_handler(config: Config):
             # Using read() keeps reading forever - read1() reads only whats there(?)
             data = self.rfile.read1()
             para = json.loads(data)
+            self.log_message(f"adding voucher {para}")
 
             try:
                 voucher = add_voucher(config, para)

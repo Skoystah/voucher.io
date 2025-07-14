@@ -18,8 +18,8 @@ def start(config: Config):
             args = ipt[1:]
         
         if command in commands:
-            handler = commands[command].create_handler()
-            handler.handle(config, args)
+            handler = commands[command].handler_function
+            handler(config, args)
         else:
             print("command unknown")
         continue

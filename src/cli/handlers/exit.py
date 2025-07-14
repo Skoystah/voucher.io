@@ -1,8 +1,6 @@
 import sys
-import cli.handlers.base as base
 from config import Config
 
-class ExitHandler(base.BaseHandler):
-    def handle(self, config: Config, *args):
-        print("Exiting application...")
-        sys.exit(0)
+def handle_exit(config: Config, *args) -> None:
+    print("Exiting application...")
+    sys.exit(0)

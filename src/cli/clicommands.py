@@ -1,45 +1,42 @@
-from typing import Dict
-import config
-import cli.handlers.exit as exit
-import cli.handlers.help as help
-import cli.handlers.voucher as voucher
+from typing import Dict,Callable
+from cli.handlers.exit import handle_exit
+from cli.handlers.help import handle_help
+from cli.handlers.voucher import handle_list_vouchers, handle_use_voucher, handle_add_voucher
 
 
 class CliCommand():
-    def __init__(self, name: str, description: str, handler_class: type) -> None:
+    def __init__(self, name: str, description: str, handler_function: Callable) -> None:
         self.name = name
         self.description = description
-        self.handler_class = handler_class
+        self.handler_function = handler_function
 
-    def create_handler(self):
-        return self.handler_class()
 
 def get_commands() -> Dict[str, CliCommand]:
     return {
             "help": CliCommand(
                 name= "help",
                 description= "show all available commands",
-                handler_class=help.HelpHandler
+                handler_function=handle_help
                 ),
             "exit": CliCommand(
                 name= "exit",
                 description= "exit program",
-                handler_class=exit.ExitHandler
+                handler_function=handle_exit
                 ),
             "add": CliCommand(
                 name= "add",
                 description= "add parking voucher",
-                handler_class=voucher.AddVoucherHandler
+                handler_function=handle_add_voucher
                 ),
             "list": CliCommand(
                 name= "list",
                 description= "list all parking vouchers",
-                handler_class=voucher.ListVoucherHandler
+                handler_function=handle_list_vouchers
                 ),
             "use": CliCommand(
                 name= "use",
                 description= "use given voucher",
-                handler_class=voucher.UseVoucherHandler
+                handler_function=handle_use_voucher
                 ),
             }
             
