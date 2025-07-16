@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Voucher.io</title>
+    <link href="css/style.css" rel="stylesheet">
+    <script defer type="module" src="scripts/main.js"></script>
+</head>
+
+<body>
+    <h1>Leuven parking vouchers</h1>
+    <p id="introduction">This application will retrieve available parking vouchers for the <span
+            class="zone">LEU1</span> parking
+        zone.</p>
+    <div>
+        <table id="vouchers-table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Duration</th>
+                    <th>Available</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <br />
+    <br />
+    <!-- Get vouchers -->
+    <div class="form" id="input-part">
+        <!-- <form id="get_vouchers" action="http://localhost:8000/vouchers" method="get"> -->
+        <form id="get_vouchers_form">
+            <!-- <label for="code">Voucher code:</label> -->
+            <!-- <input type="text" name="code" required="required" /></title><br /> -->
+
+            <!-- To implement later on -->
+            <!-- <input type="checkbox" name="duration" value="1h" />1 hour -->
+            <!-- <input type="checkbox" name="duration" value="2h" />2 hours -->
+            <!-- <input type="checkbox" name="duration" value="4h" />4 hours -->
+
+            <!-- Not that user friendly for this! -->
+            <!-- <select name="duration" size="3" multiple="multiple"> -->
+            <!--     <option value="1h">1 hour</option> -->
+            <!--     <option value="2h">2 hours</option> -->
+            <!--     <option value="4h">4 hours</option> -->
+            <!-- </select> -->
+
+            <!-- <br /> -->
+            <label for="getVouchers">Get vouchers:</label>
+            <input type=" submit" value="Submit" class="getVoucherSubmit" />
+        </form>
+    </div> <!-- End of get vouchers form -->
+    <!-- Add a new voucher -->
+    <!-- <div> -->
+    <!--     <form action="http://localhost:8000/vouchers" method="post" enctype="application/json"> -->
+    <!--         <label for="code">Voucher code:</label> -->
+    <!--         <input type="text" name="code" required="required" /></title><br /> -->
+    <!--         <input type="submit" value="Submit" /> -->
+    <!--     </form> -->
+    <!-- </div> -->
+</body>
+
+</html>

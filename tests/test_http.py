@@ -4,7 +4,6 @@ import requests
 import time
 import threading
 import http.server
-from web import jsonhelper
 from web.handler import create_handler
 from base import BaseTestClass
 from voucher.models import Voucher, VoucherDB

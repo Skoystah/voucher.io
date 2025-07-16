@@ -1,0 +1,26 @@
+/* h1 { */
+/*     color: yellow; */
+/* } */
+
+p.zone {
+    color: red;
+    font-weight: bold;
+}
+
+#vouchers-table {
+    border-style: double;
+}
+
+#input-part {
+    font-weight: bolder;
+    font-style: italic;
+}
+
+
+/* p { */
+/*     font-weight: bold; */
+/* } */
+
+/* * { */
+/*     font-style: oblique; */
+/* } */
