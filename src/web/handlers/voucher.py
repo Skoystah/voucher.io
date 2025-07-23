@@ -1,20 +1,17 @@
-from typing import List, Dict, Any
-from config import Config
 from voucher.models import Voucher, VoucherDB
 
 
-def get_vouchers(config: Config, *args) -> List[Voucher]:
+def get_vouchers(config, **kwargs):
     voucherDB = VoucherDB(config)
 
-    #todo add arguments
-    vouchers = voucherDB.get_vouchers()
+    vouchers = voucherDB.get_vouchers(**kwargs)
 
     if len(vouchers) == 0:
         return []
          
     return vouchers
 
-def add_voucher(config: Config, para: Dict[str, Any]) -> Voucher:
+def add_voucher(config, para):
     voucherDB = VoucherDB(config)
 
     code = para['code']
@@ -24,7 +21,7 @@ def add_voucher(config: Config, para: Dict[str, Any]) -> Voucher:
 
     return voucher
     
-def use_voucher(config: Config, code) -> None:
+def use_voucher(config, code):
     voucherDB = VoucherDB(config)
     voucherDB.use_voucher(code)
 

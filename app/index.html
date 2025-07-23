@@ -12,26 +12,32 @@
 
 <body>
     <h1>Leuven parking vouchers</h1>
-    <p id="introduction">This application will retrieve available parking vouchers for the <span
-            class="zone">LEU1</span> parking
-        zone.</p>
+    <p id="introduction">This application will retrieve available parking vouchers
+        for the <span class="zone">LEU1</span> parking zone.</p>
 
-    <!-- List of retrieved vouchers -->
+    <!-- List of retrieved vouchers - dynamically populated -->
     <div id="vouchers-data">
     </div>
+
     <br />
     <br />
+
     <!-- Get vouchers -->
-    <div class="form" id="search-vouchers">
-        <form id="search-vouchers-form">
+    <div id="vouchers-search">
+        <form id="vouchers-search-form">
             <!-- <label for="code">Voucher code:</label> -->
             <!-- <input type="text" name="code" required="required" /></title><br /> -->
 
-            <!-- To implement later on -->
-            <!-- <input type="checkbox" name="duration" value="1h" />1 hour -->
-            <!-- <input type="checkbox" name="duration" value="2h" />2 hours -->
-            <!-- <input type="checkbox" name="duration" value="4h" />4 hours -->
+            <p>
+                <label><input type="radio" name="duration" value="any" />Any</label>
+                <label><input type="radio" name="duration" value="1h" />1 hour</label>
+                <label><input type="radio" name="duration" value="2h" />2 hours</label>
+                <label><input type="radio" name="duration" value="4h" />4 hours</label>
+            </p>
 
+            <p>
+                <input type="checkbox" name="include-used" value=true />Show used vouchers?
+            </p>
             <!-- Not that user friendly for this! -->
             <!-- <select name="duration" size="3" multiple="multiple"> -->
             <!--     <option value="1h">1 hour</option> -->

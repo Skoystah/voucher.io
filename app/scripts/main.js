@@ -1,5 +1,30 @@
 async function getVouchers() {
-    const url = "http://localhost:8000/vouchers";
+    const form = document.getElementById("vouchers-search-form");
+    const formInput = new FormData(form);
+
+    let params = new URLSearchParams();
+
+    params.set("includeUsed", "false");
+    for (const [key, value] of formInput) {
+        switch (key) {
+            case "duration":
+                if (value.toLowerCase() === "any") {
+                    break
+                };
+                params.set("duration", value);
+                break;
+            case "include-used":
+                params.set("includeUsed", value);
+                break;
+        }
+    }
+
+    let url = `http://${window.location.hostname}:8000/vouchers`;
+    const query = params.toString();
+    if (query) {
+        url = url.concat("?", query);
+    }
+
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -18,7 +43,7 @@ async function getVouchers() {
 async function useVoucher(code) {
     console.log(`Using voucher ${code}`);
 
-    const url = `http://localhost:8000/vouchers/${code}`;
+    const url = `http://${window.location.hostname}:8000/vouchers/${code}`;
     const request = new Request(
         url,
         {
@@ -31,10 +56,7 @@ async function useVoucher(code) {
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
-
-        const data = await response.json()
-        console.log(data);
-
+        // getVouchers();
     } catch (error) {
         console.error(error.message);
     }
@@ -61,6 +83,7 @@ function presentVouchers(data) {
 
     //add voucher table
     const voucherTable = document.createElement("table");
+    voucherTable.id = "vouchers-table"
     vouchersData.appendChild(voucherTable);
 
     const voucherTableRow = document.createElement("tr");
@@ -96,12 +119,12 @@ function presentVouchers(data) {
         if (!item.used) {
             const useButton = document.createElement("button");
             useButton.textContent = "Use voucher";
-            useButton.addEventListener("click", () => {
-                useVoucher(item.code);
-                //TODO - get updated resource from API?
-                item.used = true;
-                availableData.textContent = translateUsedAvailable(item.used);
-                voucherTableRow.removeChild(useButton);
+            useButton.addEventListener("click", async () => {
+                if (window.confirm("Are you sure you want to use this voucher?")) {
+                    await useVoucher(item.code);
+                    // TODO - acceptable to fetch all again?
+                    getVouchers();
+                };
             });
             voucherTableRow.appendChild(useButton);
         }
@@ -109,6 +132,9 @@ function presentVouchers(data) {
 }
 
 const getVoucherSubmit = document.querySelector(".getVoucherSubmit");
-getVoucherSubmit.addEventListener("click", getVouchers);
+getVoucherSubmit.addEventListener("click", () => {
+    getVouchers();
+});
 
-
+// ON LOADING
+getVouchers();

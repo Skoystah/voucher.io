@@ -1,36 +1,34 @@
-from typing import List, Optional
-from config import Config
 import voucher.db as db
 
 class Voucher():
-    def __init__(self, code: str, duration: str, used: bool = False) -> None:
+    def __init__(self, code, duration, used = False):
         self.code = code.upper()
         self.duration = duration
         self.used = used
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return (
                 self.code == other.code and
                 self.duration == other.duration and
                 self.used == other.used
                 )
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return f'code = {self.code} | duration = {self.duration} | used = {self.used}'
 
     
 class VoucherDB():
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config):
         self.db = db.DB(config.db)
 
-    def add_voucher(self, voucher: Voucher) -> None:
+    def add_voucher(self, voucher):
         self.db.add_voucher(db.AddVoucherParams
                               (code= voucher.code,
                                duration= voucher.duration
                                )
                               )
 
-    def get_voucher(self, code: str) -> Voucher:
+    def get_voucher(self, code):
         row = self.db.get_voucher(code)
         return Voucher(
                 code= row.code,
@@ -38,8 +36,22 @@ class VoucherDB():
                 used=row.used
                 )
 
-    def get_vouchers(self, used: Optional[bool] = None, duration: Optional[str] = None) -> List[Voucher]:
+    def get_vouchers(self, **kwargs):
         vouchers = []
+        used, duration = None, None
+
+        for key, value in kwargs.items():
+            match key:
+                case "includeUsed":
+                    if value == 'true':
+                        used = None
+                    else:
+                        used = False
+                case "duration":
+                    duration = kwargs["duration"]
+                case _:
+                    continue
+
         rows = self.db.get_vouchers(
                 db.GetVoucherParams(
                     used=used,
@@ -55,7 +67,7 @@ class VoucherDB():
                             )
         return vouchers
 
-    def use_voucher(self, code: str) -> None:
+    def use_voucher(self, code):
         self.db.use_voucher(code.upper())   
 
 

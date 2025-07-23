@@ -1,9 +1,6 @@
-import os
 import unittest
 from base import BaseTestClass
 from voucher.models import Voucher, VoucherDB
-from voucher.db import DB
-from config import Config
 
 class TestVouchers(BaseTestClass):
 
@@ -26,9 +23,9 @@ class TestVouchers(BaseTestClass):
         self.assertEqual(len(voucherDB.get_vouchers()), 1)
 
     def test_get_vouchers(self):
-        vouch = Voucher(code="LEU123", duration="1h")
-        vouch2 = Voucher(code="LEU456", duration="2h")
-        expected_vouchers = [vouch, vouch2]
+        vouch = Voucher(code="LEU123", duration="2h")
+        vouch2 = Voucher(code="LEU456", duration="1h")
+        expected_vouchers = [vouch2, vouch]
 
         voucherDB = VoucherDB(self.config)
         voucherDB.add_voucher(vouch)
@@ -54,7 +51,9 @@ class TestVouchers(BaseTestClass):
         vouch2.used = True
         expected_vouchers = [vouch]
 
-        self.assertEqual(voucherDB.get_vouchers(used=False), expected_vouchers)
+        query = {"includeUsed":"false"}
+
+        self.assertEqual(voucherDB.get_vouchers(**query), expected_vouchers)
 
     def test_get_vouchers_filter_duration(self):
         vouch = Voucher(code="LEU123", duration="1h")
@@ -65,7 +64,9 @@ class TestVouchers(BaseTestClass):
         voucherDB.add_voucher(vouch)
         voucherDB.add_voucher(vouch2)
 
-        self.assertEqual(voucherDB.get_vouchers(duration="2h"), expected_vouchers)
+        query = {"duration":"2h"}
+
+        self.assertEqual(voucherDB.get_vouchers(**query), expected_vouchers)
 
     def test_get_voucher(self):
         vouch = Voucher(code="LEU123", duration="1h")

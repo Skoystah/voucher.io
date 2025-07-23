@@ -1,7 +1,6 @@
 import json
 import unittest
 import requests
-import time
 import threading
 import http.server
 from web.handler import create_handler
@@ -75,7 +74,51 @@ class TestHTTP(BaseTestClass):
         res = requests.get('http://localhost:8000/vouchers')
         self.assertEqual(res.json(), json.loads(expected_vouchers))
 
-    # @unittest.skip('not yet ready')
+    def test_handle_list_filtered_voucher_duration(self):
+
+        vouch = Voucher(code='LEU123', duration='1h')
+        vouch2 = Voucher(code='LEU456', duration='2h')
+
+        expected_vouchers = """
+        [
+            {
+            "code": "LEU456",
+            "duration": "2h",
+            "used": false
+            }
+        ]
+        """
+
+        voucherDB = VoucherDB(self.config)
+        voucherDB.add_voucher(vouch)
+        voucherDB.add_voucher(vouch2)
+
+        res = requests.get('http://localhost:8000/vouchers?duration=2h')
+        self.assertEqual(res.json(), json.loads(expected_vouchers))
+
+    def test_handle_list_filtered_voucher_used(self):
+
+        vouch = Voucher(code='LEU123', duration='1h')
+        vouch2 = Voucher(code='LEU456', duration='2h')
+
+        expected_vouchers = """
+        [
+            {
+            "code": "LEU456",
+            "duration": "2h",
+            "used": false
+            }
+        ]
+        """
+
+        voucherDB = VoucherDB(self.config)
+        voucherDB.add_voucher(vouch)
+        voucherDB.add_voucher(vouch2)
+        voucherDB.use_voucher(vouch.code)
+
+        res = requests.get('http://localhost:8000/vouchers?includeUsed=false')
+        self.assertEqual(res.json(), json.loads(expected_vouchers))
+
     def test_handle_use_voucher(self):
         vouch = Voucher(code='LEU123', duration='1h')
 

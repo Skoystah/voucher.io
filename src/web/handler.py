@@ -2,32 +2,32 @@ from typing import List
 import http.server
 from http import HTTPStatus
 from web.handlers.voucher import get_vouchers, add_voucher, use_voucher
-from config import Config
 import json
-from web.jsonhelper import custom_decode_json, custom_encode_json
+from urllib.parse import urlparse
+from web.jsonhelper import custom_encode_json
 
-def create_handler(config: Config):
+def create_handler(config):
     class HTTPVoucherHandler(http.server.BaseHTTPRequestHandler):
         # HTTP METHODS
-        def do_GET(self) -> None:
-            path = self.extract_path()
-            self.log_message(f'GET path {self.path} || {path}')
+        def do_GET(self):
+            path, query = self.extract_path()
+            self.log_message(f'GET path {self.path} || {path} || {query}')
             match path[0]:
                 case "vouchers":
-                    self.handle_get_vouchers()
+                    self.handle_get_vouchers(**query)
                 case default:
                     self.send_error(HTTPStatus.NOT_FOUND, "Not implemented - come back again later")
 
-        def do_POST(self) -> None:
-            path = self.extract_path()
+        def do_POST(self):
+            path, _ = self.extract_path()
             self.log_message(f'POST path {self.path} || {path}')
 
             match path[0]:
                 case "vouchers":
                     self.handle_add_voucher()
 
-        def do_PUT(self) -> None:
-            path = self.extract_path()
+        def do_PUT(self):
+            path, _ = self.extract_path()
             self.log_message(f'PUT path {self.path} || {path}')
             
             match path[0]:
@@ -48,18 +48,26 @@ def create_handler(config: Config):
                 case _:
                     self.send_error(HTTPStatus.NOT_FOUND, "Not implemented - come back again later")
 
-        def do_OPTIONS(self) -> None:
+        def do_OPTIONS(self):
             self.handle_options()
 
         # HELPER FUNCTIONS
-        def extract_path(self) -> List[str]:
-            return self.path.strip('/').split('/')
+        def extract_path(self):
+            parsed = urlparse(self.path)
+            path = parsed.path.strip('/').split('/')
+            query = {}
+            for item in parsed.query.split('&'):
+                if item:
+                    key, value = item.split('=')
+                    query[key] = value.lower()
+
+            return path, query
 
         # HANDLERS
-        def handle_get_vouchers(self) -> None:
+        def handle_get_vouchers(self, **kwargs):
             try:
                 #retrieve vouchers
-                vouchers = get_vouchers(config)
+                vouchers = get_vouchers(config, **kwargs)
 
                 #create response header
                 self.send_response(HTTPStatus.OK)
@@ -73,7 +81,7 @@ def create_handler(config: Config):
             except Exception as e:
                 self.send_error(HTTPStatus.BAD_REQUEST, f"Voucher could not be entered: {e}")
 
-        def handle_add_voucher(self) -> None:
+        def handle_add_voucher(self):
             # Using read() keeps reading forever - read1() reads only whats there(?)
             data = self.rfile.read1()
             para = json.loads(data)
@@ -90,7 +98,7 @@ def create_handler(config: Config):
             except KeyError as e:
                 self.send_error(HTTPStatus.CONFLICT, f"Voucher could not be entered: {e}")
 
-        def handle_use_voucher(self, code: str) -> None:
+        def handle_use_voucher(self, code):
             self.log_message(f"using voucher with para: {code}")
 
             try:

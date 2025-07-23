@@ -2,14 +2,31 @@
 /*     color: yellow; */
 /* } */
 
-p.zone {
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+span.zone {
     color: red;
     font-weight: bold;
 }
 
 #vouchers-table {
     border-style: double;
+    width: 600px;
 }
+
+#vouchers-table th {
+    text-transform: uppercase;
+    text-align: left;
+    border-bottom: 2px double;
+}
+
+#vouchers-table tr {
+    border-bottom: 1px dashed;
+}
+
+
 
 /* #input-part { */
 /*     font-weight: bolder; */

@@ -53,6 +53,7 @@ class DB():
             )
 
     def get_vouchers(self, params: GetVoucherParams) -> List[GetVoucherRow]:
+        print("get vouchers", params.used, params.duration)
         vouchers = []
         query = "SELECT * FROM voucher"
 
@@ -65,6 +66,9 @@ class DB():
             para.append(params.used)
         if len(args) > 0:
             query += " WHERE" + " AND".join(args)
+
+        query += " ORDER BY duration ASC"
+        print("get vouchers", params.used, query)
 
         res = self.connection.execute(query, para)
 
