@@ -15,25 +15,15 @@
     <p id="introduction">This application will retrieve available parking vouchers for the <span
             class="zone">LEU1</span> parking
         zone.</p>
-    <div>
-        <table id="vouchers-table">
-            <thead>
-                <tr>
-                    <th>Code</th>
-                    <th>Duration</th>
-                    <th>Available</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+
+    <!-- List of retrieved vouchers -->
+    <div id="vouchers-data">
     </div>
     <br />
     <br />
     <!-- Get vouchers -->
-    <div class="form" id="input-part">
-        <!-- <form id="get_vouchers" action="http://localhost:8000/vouchers" method="get"> -->
-        <form id="get_vouchers_form">
+    <div class="form" id="search-vouchers">
+        <form id="search-vouchers-form">
             <!-- <label for="code">Voucher code:</label> -->
             <!-- <input type="text" name="code" required="required" /></title><br /> -->
 
@@ -49,19 +39,10 @@
             <!--     <option value="4h">4 hours</option> -->
             <!-- </select> -->
 
-            <!-- <br /> -->
-            <label for="getVouchers">Get vouchers:</label>
-            <input type=" submit" value="Submit" class="getVoucherSubmit" />
+            <button type="button" class="getVoucherSubmit">Search vouchers</button>
         </form>
-    </div> <!-- End of get vouchers form -->
-    <!-- Add a new voucher -->
-    <!-- <div> -->
-    <!--     <form action="http://localhost:8000/vouchers" method="post" enctype="application/json"> -->
-    <!--         <label for="code">Voucher code:</label> -->
-    <!--         <input type="text" name="code" required="required" /></title><br /> -->
-    <!--         <input type="submit" value="Submit" /> -->
-    <!--     </form> -->
-    <!-- </div> -->
+    </div>
+    <!-- End of get vouchers form -->
 </body>
 
 </html>
