@@ -1,13 +1,12 @@
 import sqlite3
-from typing import List, Optional
 
 class GetVoucherRow():
-    def __init__(self, code: str, duration: str, used: bool) -> None:
+    def __init__(self, code, duration, used):
         self.code = code
         self.duration = duration
         self.used = used
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return (
                 self.code == other.code and
                 self.duration == other.duration and
@@ -15,23 +14,23 @@ class GetVoucherRow():
                 )
 
 class AddVoucherParams():
-    def __init__(self, code: str, duration: str) -> None:
+    def __init__(self, code, duration):
         self.code = code
         self.duration = duration
 
 
 class GetVoucherParams():
-    def __init__(self, duration: Optional[str] = None, used: Optional[bool] = None) -> None:
+    def __init__(self, duration = None, used = None):
         self.duration = duration
         self.used = used
 
 class DB():
-    def __init__(self, db: str="voucher.db") -> None:
+    def __init__(self, db = "voucher.db"):
         self.connection = sqlite3.connect(db)
         self.connection.row_factory = sqlite3.Row
 
 
-    def add_voucher(self, voucher: AddVoucherParams) -> None:
+    def add_voucher(self, voucher):
         data = (voucher.code, voucher.duration)
         try:
             with self.connection:
@@ -39,7 +38,7 @@ class DB():
         except sqlite3.IntegrityError:
             raise KeyError("Voucher already exists")
 
-    def get_voucher(self, code: str) -> GetVoucherRow:
+    def get_voucher(self, code):
         res = self.connection.execute("SELECT * FROM voucher WHERE code = ?", (code,))
         row = res.fetchone()
 
@@ -52,7 +51,7 @@ class DB():
             used=False if row["used"] == 0 else True
             )
 
-    def get_vouchers(self, params: GetVoucherParams) -> List[GetVoucherRow]:
+    def get_vouchers(self, params):
         print("get vouchers", params.used, params.duration)
         vouchers = []
         query = "SELECT * FROM voucher"
@@ -82,7 +81,7 @@ class DB():
                     )
         return vouchers
 
-    def use_voucher(self, code: str) -> None:
+    def use_voucher(self, code):
         try:
             with self.connection:
                 self.connection.execute("UPDATE voucher SET used = 1 WHERE code = ?", (code,))

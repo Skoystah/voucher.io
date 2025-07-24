@@ -1,7 +1,6 @@
-from config import Config
 from voucher.models import Voucher, VoucherDB
 
-def handle_list_vouchers(config: Config, *args) -> None:
+def handle_list_vouchers(config, **kwargs):
     voucherDB = VoucherDB(config)
 
     #todo add arguments
@@ -17,7 +16,7 @@ def handle_list_vouchers(config: Config, *args) -> None:
 
 
 
-def handle_add_voucher(config: Config, *args) -> None:
+def handle_add_voucher(config, **kwargs):
     print("Add voucher code:")
     code = input()
     #TO-DO - input validation on code
@@ -38,7 +37,7 @@ c) 4h
             duration = "2h"
         case "c":
             duration = "4h"
-        case default:
+        case _:
             duration = "1h"
 
     voucherDB = VoucherDB(config)
@@ -54,7 +53,7 @@ c) 4h
     except Exception as e:
         print(f"Error - {e}")
 
-def handle_use_voucher(config: Config, *args) -> None:
+def handle_use_voucher(config, *args) -> None:
     if len(args) == 0:
         print("Voucher code required")
         return

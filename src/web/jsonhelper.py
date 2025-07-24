@@ -1,13 +1,12 @@
-from typing import Dict, Any
 from voucher.models import Voucher
 
-def custom_encode_json(o: Any) -> Dict[str, Any]:
-    if isinstance(o, Voucher):
-        return {"code": o.code, "duration": o.duration, "used": o.used}
-    raise TypeError(f'Cannot deserialize object of {type(o)}')
+def custom_encode_json(obj):
+    if isinstance(obj, Voucher):
+        return {"code": obj.code, "duration": obj.duration, "used": obj.used}
+    raise TypeError(f'Cannot deserialize object of {type(obj)}')
 
-def custom_decode_json(d: Dict[str, Any]) -> Any:
-    if "__voucher__" in d:
+def custom_decode_json(dct):
+    if "__voucher__" in dct:
         # what if a value is not filled out ?? e.g. used for a new voucher
-        return Voucher(d['code'], d['duration'], d['used'])
-    return d
+        return Voucher(dct['code'], dct['duration'], dct['used'])
+    return dct

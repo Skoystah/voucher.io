@@ -19,7 +19,8 @@ async function getVouchers() {
         }
     }
 
-    let url = `http://${window.location.hostname}:8000/vouchers`;
+    // let url = `http://${window.location.hostname}:8000/vouchers`;
+    let url = `https://added-inessa-skoystah-6cf66432.koyeb.app/vouchers`;
     const query = params.toString();
     if (query) {
         url = url.concat("?", query);

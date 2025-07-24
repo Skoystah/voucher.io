@@ -24,7 +24,6 @@ class TestHTTP(BaseTestClass):
         self.httpd.shutdown()
         self.thread.join()
 
-    # @unittest.skip("blah")
     def test_handle_add_voucher(self):
 
         vouch = """
@@ -46,7 +45,6 @@ class TestHTTP(BaseTestClass):
 
         self.assertEqual(res.json(), json.loads(expected_vouch))
 
-    # @unittest.skip("blah")
     def test_handle_list_voucher(self):
 
         vouch = Voucher(code='LEU123', duration='1h')

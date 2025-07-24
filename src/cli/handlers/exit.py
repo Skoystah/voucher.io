@@ -1,6 +1,5 @@
 import sys
-from config import Config
 
-def handle_exit(config: Config, *args) -> None:
+def handle_exit(config, *args):
     print("Exiting application...")
     sys.exit(0)

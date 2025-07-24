@@ -1,6 +1,4 @@
-from config import Config
-
-def handle_help(config: Config, *args):
+def handle_help(config, *args):
     #TO-DO - do this flexibly based on the commands - pass to *args?
     print(
 """Available commands:

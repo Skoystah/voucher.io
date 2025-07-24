@@ -1,4 +1,3 @@
-from typing import List
 import http.server
 from http import HTTPStatus
 from web.handlers.voucher import get_vouchers, add_voucher, use_voucher
