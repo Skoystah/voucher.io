@@ -1,4 +1,3 @@
-````markdown name=README.md
 # voucher.io
 
 A small application to retrieve available parking vouchers for Leuven.
@@ -194,4 +193,4 @@ Currently no license. Please contact the repository owner if you wish to use thi
 ## Author
 
 [Skoystah](https://github.com/Skoystah)
-````
+
