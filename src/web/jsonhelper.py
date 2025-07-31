@@ -1,4 +1,4 @@
-from voucher.models import Voucher
+from voucher.db import Voucher
 
 def custom_encode_json(obj):
     if isinstance(obj, Voucher):

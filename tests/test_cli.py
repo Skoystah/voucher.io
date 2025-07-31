@@ -5,7 +5,8 @@ from cli.handlers.exit import handle_exit
 from cli.handlers.help import handle_help
 from cli.handlers.voucher import handle_list_vouchers, handle_use_voucher, handle_add_voucher
 from base import BaseTestClass
-from voucher.models import Voucher, VoucherDB
+from voucher.models import VoucherDB
+from voucher.db import Voucher
 
 class TestCLI(BaseTestClass):
     def test_handle_help(self):
@@ -20,42 +21,46 @@ class TestCLI(BaseTestClass):
             self.assertIn("add", output)
 
     def test_handle_add_voucher(self):
-        vouch = Voucher(code="leu123", duration="1h")
+        vouch = Voucher("LEU123", "1h")
 
         with patch('cli.handlers.voucher.input') as mock_input:
             mock_input.side_effect = [vouch.code, "a"] 
             handle_add_voucher(self.config)
 
         voucherDB = VoucherDB(self.config)
-        self.assertEqual(voucherDB.get_voucher(vouch.code), vouch)
+        
+        expected_vouch = Voucher("LEU123", "1h")
+        self.assertEqual(voucherDB.get_voucher(expected_vouch.code), expected_vouch)
 
     def test_handle_list_voucher(self):
 
-        vouch = Voucher(code="LEU123", duration="1h")
-        vouch2 = Voucher(code="LEU456", duration="2h")
+        vouch = Voucher("LEU123", "1h")
+        vouch2 = Voucher("LEU456", "2h")
 
         voucherDB = VoucherDB(self.config)
         voucherDB.add_voucher(vouch)
         voucherDB.add_voucher(vouch2)
 
+        expected_vouch = Voucher("LEU123", "1h")
+        expected_vouch2 = Voucher("LEU456", "2h")
         with patch('sys.stdout', new=io.StringIO()) as dummy_stdout:
             handle_list_vouchers(self.config)
 
             output = dummy_stdout.getvalue().strip()
-            self.assertIn(vouch.code, output)
-            self.assertIn(vouch2.code, output)
+            self.assertIn(expected_vouch.code, output)
+            self.assertIn(expected_vouch2.code, output)
 
 
     def test_handle_use_voucher(self):
 
-        vouch = Voucher(code="LEU123", duration="1h")
+        vouch = Voucher("LEU123", "1h")
 
         voucherDB = VoucherDB(self.config)
         voucherDB.add_voucher(vouch)
 
-        handle_use_voucher(self.config, vouch.code)
+        handle_use_voucher(self.config, "LEU123")
 
-        self.assertEqual(voucherDB.get_voucher(vouch.code).used, True)
+        self.assertEqual(voucherDB.get_voucher("LEU123").used, True)
 
 
     # Todo add unhappy testcases

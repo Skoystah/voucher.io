@@ -5,7 +5,8 @@ import threading
 import http.server
 from web.handler import create_handler
 from base import BaseTestClass
-from voucher.models import Voucher, VoucherDB
+from voucher.models import VoucherDB
+from voucher.db import Voucher
 
 class TestHTTP(BaseTestClass):
 
@@ -112,7 +113,7 @@ class TestHTTP(BaseTestClass):
         voucherDB = VoucherDB(self.config)
         voucherDB.add_voucher(vouch)
         voucherDB.add_voucher(vouch2)
-        voucherDB.use_voucher(vouch.code)
+        voucherDB.use_voucher("LEU123")
 
         res = requests.get('http://localhost:8000/vouchers?includeUsed=false')
         self.assertEqual(res.json(), json.loads(expected_vouchers))
@@ -123,9 +124,9 @@ class TestHTTP(BaseTestClass):
         voucherDB = VoucherDB(self.config)
         voucherDB.add_voucher(vouch)
 
-        res = requests.put(f'http://localhost:8000/vouchers/{vouch.code}')
+        res = requests.put(f'http://localhost:8000/vouchers/{"LEU123"}')
 
-        self.assertEqual(voucherDB.get_voucher(vouch.code).used, True)
+        self.assertEqual(voucherDB.get_voucher("LEU123").used, True)
 
 
     # Todo add unhappy testcases

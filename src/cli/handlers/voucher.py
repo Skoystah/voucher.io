@@ -1,6 +1,7 @@
-from voucher.models import Voucher, VoucherDB
+from voucher.models import VoucherDB
+from voucher.db import Voucher
 
-def handle_list_vouchers(config, **kwargs):
+def handle_list_vouchers(config, *args):
     voucherDB = VoucherDB(config)
 
     #todo add arguments
@@ -16,7 +17,7 @@ def handle_list_vouchers(config, **kwargs):
 
 
 
-def handle_add_voucher(config, **kwargs):
+def handle_add_voucher(config, *args):
     print("Add voucher code:")
     code = input()
     #TO-DO - input validation on code
@@ -41,12 +42,8 @@ c) 4h
             duration = "1h"
 
     voucherDB = VoucherDB(config)
+    new_voucher = Voucher(code,duration) 
 
-    new_voucher = Voucher(
-            code=code, 
-            duration=duration, 
-            used=False
-            )
     try:
         voucherDB.add_voucher(new_voucher)
         print(f"Added voucher {new_voucher}")

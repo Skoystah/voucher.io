@@ -1,100 +1,137 @@
 import unittest
 from base import BaseTestClass
-from voucher.db import AddVoucherParams, GetVoucherParams, GetVoucherRow
-from voucher.models import Voucher
+from voucher.db import Voucher
+
+from sqlalchemy.orm import Session
 
 
 class TestDB(BaseTestClass):
 
     def test_add_voucher(self):
+        voucher_code = "LEU123"
+        voucher_duration = "1h"
+        
+        voucher = Voucher(voucher_code, voucher_duration)
 
-        voucher = Voucher("LEU123", "1h")
+        self.db.add_voucher(voucher)
 
-        self.db.add_voucher(AddVoucherParams
-                              (code= voucher.code,
-                               duration= voucher.duration
-                               )
-                              )
-
-        res = self.db.connection.execute("SELECT * from voucher")
-        added_voucher = res.fetchone()
-        self.assertEqual((added_voucher["code"], added_voucher["duration"], added_voucher["used"]),
-                         (voucher.code, voucher.duration, False))
+        with Session(self.db.engine) as session:
+            expected_voucher = Voucher(voucher_code, voucher_duration, False)
+            self.assertEqual(session.get(Voucher, voucher_code) ,expected_voucher)
 
     
     def test_add_duplicate_voucher_error(self):
-
-        voucher = Voucher("LEU123", "1h")
-        params = AddVoucherParams(code= voucher.code, 
-                                  duration= voucher.duration
-                                  )
-
-        self.db.add_voucher(params)
+        voucher_code = "LEU123"
+        voucher_duration = "1h"
         
+        voucher = Voucher(voucher_code, voucher_duration)
+
+        self.db.add_voucher(voucher)
+
         with self.assertRaises(KeyError):
-            self.db.add_voucher(params)
+            duplicate_voucher = Voucher(voucher_code, voucher_duration)
+            self.db.add_voucher(duplicate_voucher)
 
     def test_get_voucher(self):
+        voucher_code = "LEU123"
+        voucher_duration = "1h"
+        
+        voucher = Voucher(voucher_code, voucher_duration)
 
-        voucher = Voucher("LEU123", "1h")
-        retrieved_voucher = GetVoucherRow(voucher.code, voucher.duration, False)
+        self.db.add_voucher(voucher)
 
-        self.db.add_voucher(AddVoucherParams (code= voucher.code, duration= voucher.duration))
-
-        self.assertEqual(self.db.get_voucher(voucher.code), retrieved_voucher)
-
+        expected_voucher = Voucher(voucher_code, voucher_duration, False)
+        self.assertEqual(self.db.get_voucher(expected_voucher.code), expected_voucher)
+        print(self.db.get_voucher(voucher_code))
 
     def test_get_voucher_non_existing_error(self):
+        voucher_code = "LEU123"
+        other_voucher_code = "LEU666"
+        voucher_duration = "1h"
+        
+        voucher = Voucher(voucher_code, voucher_duration)
 
-        voucher = Voucher("LEU123", "1h")
-
-        self.db.add_voucher(AddVoucherParams (code= voucher.code, duration= voucher.duration))
+        self.db.add_voucher(voucher)
 
         with self.assertRaises(KeyError):
-            self.db.get_voucher("LEU666")
-            
+            self.db.get_voucher(other_voucher_code)
+
     def test_use_voucher(self):
+        voucher_code = "LEU123"
+        voucher_duration = "1h"
+        
+        voucher = Voucher(voucher_code, voucher_duration)
 
-        voucher = Voucher("LEU123", "1h")
+        self.db.add_voucher(voucher)
 
-        self.db.add_voucher(AddVoucherParams (code= voucher.code, duration= voucher.duration))
-        self.db.use_voucher(voucher.code)
+        self.db.use_voucher(voucher_code)
 
-        self.assertEqual(self.db.get_voucher(voucher.code).used, True)
+        self.assertEqual(self.db.get_voucher(voucher_code).used, True)
+
+    def test_use_non_existing_voucher(self):
+        voucher_code = "LEU123"
+        other_voucher_code = "LEU666"
+        voucher_duration = "1h"
+        
+        voucher = Voucher(voucher_code, voucher_duration)
+
+        self.db.add_voucher(voucher)
+
+        with self.assertRaises(KeyError):
+            self.db.use_voucher(other_voucher_code)
 
     def test_get_vouchers_given_duration(self):
 
-        voucher1 = Voucher("LEU123", "1h")
-        voucher2 = Voucher("LEU456", "2h")
-        voucher3 = Voucher("LEU789", "2h")
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                "LEU789"
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                "2h"
+                ]
 
-        self.db.add_voucher(AddVoucherParams (code= voucher1.code, duration= voucher1.duration))
-        self.db.add_voucher(AddVoucherParams (code= voucher2.code, duration= voucher2.duration))
-        self.db.add_voucher(AddVoucherParams (code= voucher3.code, duration= voucher3.duration))
+        for code, duration in zip(voucher_codes, voucher_durations):
+            self.db.add_voucher(Voucher(code, duration))
 
-        retrieved_voucher2 = GetVoucherRow(voucher2.code, voucher2.duration, False)
-        retrieved_voucher3 = GetVoucherRow(voucher3.code, voucher3.duration, False)
 
-        self.assertEqual(self.db.get_vouchers(GetVoucherParams(duration="2h")), 
-                         [retrieved_voucher2, retrieved_voucher3])
+        expected_duration = "2h"
+        expected_vouchers = []
+        for code,duration in zip(voucher_codes, voucher_durations):
+            if duration == expected_duration:
+                expected_vouchers.append(Voucher(code, duration))
+
+        self.assertEqual(self.db.get_vouchers(duration=expected_duration), 
+                         expected_vouchers)
 
     def test_get_unused_vouchers(self):
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                "LEU789"
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                "2h"
+                ]
 
-        voucher1 = Voucher("LEU123", "1h")
-        voucher2 = Voucher("LEU456", "2h")
-        voucher3 = Voucher("LEU789", "2h")
+        for code, duration in zip(voucher_codes, voucher_durations):
+            self.db.add_voucher(Voucher(code, duration))
 
-        self.db.add_voucher(AddVoucherParams (code= voucher1.code, duration= voucher1.duration))
-        self.db.add_voucher(AddVoucherParams (code= voucher2.code, duration= voucher2.duration))
-        self.db.add_voucher(AddVoucherParams (code= voucher3.code, duration= voucher3.duration))
+        used_code = voucher_codes[1]
+        self.db.use_voucher(used_code)
 
-        self.db.use_voucher(voucher2.code)
+        expected_vouchers = []
+        for code,duration in zip(voucher_codes, voucher_durations):
+            if code != used_code:
+                expected_vouchers.append(Voucher(code, duration))
+                
+        self.assertEqual(self.db.get_vouchers(used=False), 
+                         expected_vouchers)
 
-        retrieved_voucher1 = GetVoucherRow(voucher1.code, voucher1.duration, False)
-        retrieved_voucher3 = GetVoucherRow(voucher3.code, voucher3.duration, False)
-
-        self.assertEqual(self.db.get_vouchers(GetVoucherParams(used=False)), 
-                         [retrieved_voucher1, retrieved_voucher3])
 if __name__ == "__main__":
     unittest.main()
 

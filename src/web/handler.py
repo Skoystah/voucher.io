@@ -14,7 +14,7 @@ def create_handler(config):
             match path[0]:
                 case "vouchers":
                     self.handle_get_vouchers(**query)
-                case default:
+                case _:
                     self.send_error(HTTPStatus.NOT_FOUND, "Not implemented - come back again later")
 
         def do_POST(self):
@@ -65,8 +65,18 @@ def create_handler(config):
         # HANDLERS
         def handle_get_vouchers(self, **kwargs):
             try:
-                #retrieve vouchers
-                vouchers = get_vouchers(config, **kwargs)
+                filters = {}
+                for key, value in kwargs.items():
+                    match key:
+                        case "includeUsed":
+                            if value != "true":
+                                filters["used"] = False
+                        case "duration":
+                            filters["duration"] = value
+                        case _:
+                            self.send_error(HTTPStatus.BAD_REQUEST, f"Filter on {key} not allowed")
+                
+                vouchers = get_vouchers(config, **filters)
 
                 #create response header
                 self.send_response(HTTPStatus.OK)

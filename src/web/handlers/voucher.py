@@ -1,4 +1,5 @@
-from voucher.models import Voucher, VoucherDB
+from voucher.db import Voucher
+from voucher.models import VoucherDB
 
 
 def get_vouchers(config, **kwargs):
@@ -19,7 +20,8 @@ def add_voucher(config, para):
     voucher = Voucher(code, duration)
     voucherDB.add_voucher(voucher)
 
-    return voucher
+    # TODO - make add_voucher return the voucher, the original voucher was already ditched in the session!
+    return Voucher(code,duration, False)
     
 def use_voucher(config, code):
     voucherDB = VoucherDB(config)

@@ -5,7 +5,6 @@ from config import Config
 
 
 def main():
-    
     config = Config(db="voucher.db")
 
     args = sys.argv

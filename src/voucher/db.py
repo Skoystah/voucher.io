@@ -1,92 +1,60 @@
-import sqlite3
+from sqlalchemy import Boolean, String, create_engine, select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass, Session, mapped_column, Mapped
 
-class GetVoucherRow():
-    def __init__(self, code, duration, used):
-        self.code = code
-        self.duration = duration
-        self.used = used
+class Base(MappedAsDataclass, DeclarativeBase):
+    pass
 
-    def __eq__(self, other):
-        return (
-                self.code == other.code and
-                self.duration == other.duration and
-                self.used == other.used
-                )
+class Voucher(Base):
+    __tablename__ = "voucher"
 
-class AddVoucherParams():
-    def __init__(self, code, duration):
-        self.code = code
-        self.duration = duration
-
-
-class GetVoucherParams():
-    def __init__(self, duration = None, used = None):
-        self.duration = duration
-        self.used = used
+    code: Mapped[str] = mapped_column(primary_key=True)
+    duration: Mapped[str] = mapped_column(String(2))
+    used: Mapped[bool] = mapped_column(Boolean, default=False)
+    
 
 class DB():
-    def __init__(self, db = "voucher.db"):
-        self.connection = sqlite3.connect(db)
-        self.connection.row_factory = sqlite3.Row
+    def __init__(self, db = "voucher2.db", verbose=True):
+        self.engine = create_engine(f'sqlite+pysqlite:///{db}', echo=verbose)
 
+        Base.metadata.create_all(self.engine) 
 
     def add_voucher(self, voucher):
-        data = (voucher.code, voucher.duration)
-        try:
-            with self.connection:
-                self.connection.execute("INSERT INTO voucher (code, duration) VALUES (?, ?)",data)
-        except sqlite3.IntegrityError:
-            raise KeyError("Voucher already exists")
+        with Session(self.engine) as session:
+            try:
+                session.add(voucher)
+                # Expunging the object (removing from session) - otherwise its no longer available after flush
+                # Maybe there is a more elegant solution (get object again from database? ...)
+                session.commit()
+                session.expunge(voucher)
+            except IntegrityError:
+                session.rollback()
+                raise KeyError("Voucher already exists")
+            
 
     def get_voucher(self, code):
-        res = self.connection.execute("SELECT * FROM voucher WHERE code = ?", (code,))
-        row = res.fetchone()
+        with Session(self.engine) as session:
+            voucher = session.get(Voucher, code)
+            if voucher is None:
+                raise KeyError("Voucher does not exist")
+            
+            return voucher
 
-        if row is None:
-            raise KeyError("Voucher does not exist")
-
-        return GetVoucherRow(
-            code=row["code"], 
-            duration=row["duration"],
-            used=False if row["used"] == 0 else True
-            )
-
-    def get_vouchers(self, params):
-        print("get vouchers", params.used, params.duration)
-        vouchers = []
-        query = "SELECT * FROM voucher"
-
-        args, para = [], []
-        if params.duration is not None:
-            args.append(" duration = ?")
-            para.append(params.duration)
-        if params.used is not None:
-            args.append(" used = ?")
-            para.append(params.used)
-        if len(args) > 0:
-            query += " WHERE" + " AND".join(args)
-
-        query += " ORDER BY duration ASC"
-        print("get vouchers", params.used, query)
-
-        res = self.connection.execute(query, para)
-
-        for row in res:
-            vouchers.append(
-                    GetVoucherRow(
-                        code=row["code"], 
-                        duration=row["duration"],
-                        used=False if row["used"] == 0 else True
-                        )
-                    )
-        return vouchers
+    def get_vouchers(self, **kwargs):
+        with Session(self.engine) as session:
+            vouchers = session.scalars(select(Voucher).filter_by(**kwargs))
+            return list(vouchers)
 
     def use_voucher(self, code):
-        try:
-            with self.connection:
-                self.connection.execute("UPDATE voucher SET used = 1 WHERE code = ?", (code,))
-        except sqlite3.DatabaseError:
-            raise ValueError("Voucher not found")
+        with Session(self.engine) as session:
+            voucher = session.get(Voucher, code)
+            if voucher is None:
+                raise KeyError("Voucher does not exist")
+
+            voucher.used = True
+            session.commit()
+            session.expunge(voucher)
+            return voucher
 
 
 
