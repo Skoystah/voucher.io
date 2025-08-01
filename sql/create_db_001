@@ -1,4 +1,0 @@
-BEGIN;
-CREATE TABLE IF NOT EXISTS voucher (code TEXT PRIMARY KEY, duration TEXT, used INT CHECK(used = 0 or used = 1) DEFAULT 0, used_date TEXT);
-COMMIT;
-

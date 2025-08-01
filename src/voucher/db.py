@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, String, create_engine, select
+from sqlalchemy import Boolean, CheckConstraint, String, create_engine, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass, Session, mapped_column, Mapped
 
@@ -9,8 +9,8 @@ class Voucher(Base):
     __tablename__ = "voucher"
 
     code: Mapped[str] = mapped_column(primary_key=True)
-    duration: Mapped[str] = mapped_column(String(2))
-    used: Mapped[bool] = mapped_column(Boolean, default=False)
+    duration: Mapped[str] = mapped_column(String(2), CheckConstraint("duration in ('1h','2h','4h')", name="ck_duration"))
+    used: Mapped[bool] = mapped_column(Boolean, CheckConstraint("used in (0,1)", name="ck_voucher_used"), default=False)
     
 
 class DB():
