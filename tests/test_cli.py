@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
+import os
 import io
-from cli.handlers.exit import handle_exit
 from cli.handlers.help import handle_help
-from cli.handlers.voucher import handle_list_vouchers, handle_use_voucher, handle_add_voucher
+from cli.handlers.voucher import handle_list_vouchers, handle_use_voucher, handle_add_voucher, handle_add_vouchers_bulk
 from base import BaseTestClass
 from voucher.models import VoucherDB
 from voucher.db import Voucher
@@ -63,6 +63,34 @@ class TestCLI(BaseTestClass):
         self.assertEqual(voucherDB.get_voucher("LEU123").used, True)
 
 
+    def test_handle_add_vouchers_bulk(self):
+        vouchers = [
+                ("LEU121", "1h"),
+                ("LEU122", "2h"), 
+                ("LEU123", "12h"),
+                ("LEU124", "4h"),
+                ("LEU125", "1h"),
+                ("LEU126", "4h"),
+                ("LEU127", "2h"),
+                ("LEU128", "1h") 
+                ]
+
+        with open("test_handle_add_voucher_bulk.csv", "w") as file:
+            for voucher in vouchers:
+                file.write(f'{voucher[0]};{voucher[1]}\n')
+
+
+        handle_add_vouchers_bulk(self.config, "test_handle_add_voucher_bulk.csv")
+
+        voucherDB = VoucherDB(self.config)
+
+        expected_vouchers = []
+        for code, duration in vouchers:
+            expected_vouchers.append(Voucher(code,duration))
+        
+        self.assertEqual(voucherDB.get_vouchers(), expected_vouchers)
+
+        os.remove("test_handle_add_voucher_bulk.csv")
     # Todo add unhappy testcases
 
 

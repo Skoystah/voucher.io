@@ -1,6 +1,6 @@
 from cli.handlers.exit import handle_exit
 from cli.handlers.help import handle_help
-from cli.handlers.voucher import handle_list_vouchers, handle_use_voucher, handle_add_voucher
+from cli.handlers.voucher import handle_list_vouchers, handle_use_voucher, handle_add_voucher, handle_add_vouchers_bulk
 
 
 class CliCommand():
@@ -26,6 +26,11 @@ def get_commands():
                 name= "add",
                 description= "add parking voucher",
                 handler_function=handle_add_voucher
+                ),
+            "add-bulk": CliCommand(
+                name= "add-bulk",
+                description= "add parking vouchers in bulk",
+                handler_function=handle_add_vouchers_bulk
                 ),
             "list": CliCommand(
                 name= "list",

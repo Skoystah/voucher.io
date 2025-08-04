@@ -10,4 +10,5 @@ class BaseTestClass(unittest.TestCase):
         self.db = db.DB("test_voucher.db", verbose=False)
 
     def tearDown(self) -> None:
+        # self.db.engine.dispose()
         os.remove("test_voucher.db")

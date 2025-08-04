@@ -1,5 +1,6 @@
 from voucher.models import VoucherDB
 from voucher.db import Voucher
+import os
 
 def handle_list_vouchers(config, *args):
     voucherDB = VoucherDB(config)
@@ -49,6 +50,34 @@ c) 4h
         print(f"Added voucher {new_voucher}")
     except Exception as e:
         print(f"Error - {e}")
+
+def handle_add_vouchers_bulk(config, *args) -> None:
+    if len(args) == 0:
+        print("File name required")
+        return
+
+    file_name = args[0]
+    if not os.path.exists(file_name):
+        print("File does not exist")
+        return
+
+    added_count = 0
+
+    voucherDB = VoucherDB(config)
+
+    with open(file_name, 'r') as f:
+        for line in f:
+            code, duration = line.strip().split(';')
+            # print(code, duration)
+            try:
+                voucherDB.add_voucher(Voucher(code, duration))
+                added_count += 1
+                print(f"Added voucher {code} with duration {duration}")
+            except Exception as e:
+                print(f"Error adding voucher {code}: {e}")
+
+    print(f'Successfully added {added_count} vouchers')
+
 
 def handle_use_voucher(config, *args) -> None:
     if len(args) == 0:

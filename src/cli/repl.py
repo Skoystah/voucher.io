@@ -19,7 +19,7 @@ def start(config: Config):
         
         if command in commands:
             handler = commands[command].handler_function
-            handler(config, args)
+            handler(config, *args)
         else:
             print("command unknown")
         continue
