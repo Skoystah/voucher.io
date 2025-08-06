@@ -9,7 +9,7 @@ class Duration(str, Enum):
 
 class VoucherDB():
     def __init__(self, config):
-        self.db = db.DB(db=config.db, verbose=config.verbose)
+        self.db = db.DB(db_url=config.db_url, db_auth_token=config.db_auth_token, verbose=config.verbose)
 
     def add_voucher(self, voucher):
         if voucher.duration not in Duration:

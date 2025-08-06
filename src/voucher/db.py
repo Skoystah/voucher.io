@@ -14,8 +14,21 @@ class Voucher(Base):
     
 
 class DB():
-    def __init__(self, db = "voucher.db", verbose=True):
-        self.engine = create_engine(f'sqlite+pysqlite:///{db}', echo=verbose)
+    def __init__(self, db_url="voucher.db", db_auth_token=None, verbose=True):
+        # TODO more elegant way to decide between local and remote?
+        if db_auth_token:
+            self.engine = create_engine(
+                    "sqlite+libsql:///embedded.db", 
+                    connect_args={
+                        "auth_token": db_auth_token,
+                        "sync_url": db_url,
+                        },
+                    echo=verbose)
+        else:
+            self.engine = create_engine(
+                    f'sqlite+libsql:///{db_url}', 
+                    echo=verbose
+                    )
 
         Base.metadata.create_all(self.engine) 
 

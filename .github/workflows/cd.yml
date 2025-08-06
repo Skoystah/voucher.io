@@ -9,8 +9,10 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
-    #env - add database
-    #
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
