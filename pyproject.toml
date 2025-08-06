@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "voucher-io"
 version = "0.1.0"
-description = "Add your description here"
+description = "Web application to manage Leuven parking vouchers"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
