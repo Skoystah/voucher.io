@@ -124,7 +124,7 @@ class TestHTTP(BaseTestClass):
         voucherDB = VoucherDB(self.config)
         voucherDB.add_voucher(vouch)
 
-        res = requests.put(f'http://localhost:8000/vouchers/{"LEU123"}')
+        _ = requests.put(f'http://localhost:8000/vouchers/{"LEU123"}')
 
         self.assertEqual(voucherDB.get_voucher("LEU123").used, True)
 
