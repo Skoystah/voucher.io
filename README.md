@@ -1,14 +1,15 @@
 # voucher.io
 
-A small application to retrieve available parking vouchers for Leuven.
+A web application to retrieve and manage available parking vouchers for Leuven.
 
 ## Features
 
 - Retrieve a list of parking vouchers usable for SMS parking in Leuven
 - Filter vouchers by duration and usage
-- Mark vouchers as used so they cannot be selected again
-- Web interface for easy voucher lookup and management
-- REST API for programmatic access
+- Mark vouchers as used so they will no longer be retrieved 
+- Web interface for easy voucher lookup and management using a REST API
+- CLI interface for admin access
+- Add vouchers in bulk via a csv file (under development)
 
 ---
 
@@ -52,17 +53,17 @@ A small application to retrieve available parking vouchers for Leuven.
 2. **Install Python dependencies:**
 
    ```sh
-   pip install -r requirements.txt
+   uv sync --locked --all-extras
    ```
 
 3. **Run the server:**
 
    ```sh
    cd src
-   python main.py
+   uv run main.py
    ```
 
-   By default, the API is available at `http://localhost:8000`.
+   _By default, the API is available at `http://localhost:8000`._
 
 4. **Open the web app:**
 
@@ -87,8 +88,10 @@ The backend REST API provides endpoints to manage and query parking vouchers.
 - **GET /vouchers**
 
   Returns a list of vouchers. Optional query parameters:
-    - `duration`: Filter by duration (`1h`, `2h`, `4h`, etc.)
-    - `includeUsed`: Include vouchers that have already been used (`true` or `false`)
+    - `duration`: Filter by duration, possible values in (`1h`, `2h`, `4h`, `12h`)
+    - `includeUsed`: Include vouchers that have already been used (`true` or `false`). If absent, only unused vouchers are retrieved.
+
+  Example response:
 
   ```json
   [
@@ -107,7 +110,11 @@ The backend REST API provides endpoints to manage and query parking vouchers.
 
 - **POST /vouchers**
 
-  Add a new voucher.
+  Add a new voucher. 
+  Mandatory values:
+    - `code`: Format LEUxxxxxxxxx
+    - `duration`: One of these values: `1h`, `2h`, `4h`, `12h`
+  Voucher is created by default as unused (`used = false`)
 
   Request Body:
 
