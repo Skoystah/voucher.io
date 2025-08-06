@@ -25,13 +25,13 @@ jobs:
           # Install a specific version of uv.
           version: "0.8.5"
           
-      # - name: Set up Python 3.13
-      #   uses: actions/setup-python@v3
-      #   with:
-      #     python-version-file: "pyproject.toml"
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v3
+        with:
+          python-version-file: "pyproject.toml"
 
-      - name: Set up Python
-        run: uv python install
+      # - name: Set up Python
+      #   run: uv python install
 
       - name: Install project
         run: uv sync --locked --all-extras --dev
@@ -39,15 +39,32 @@ jobs:
       - name: Run unit tests
         run: uv run python3 -m unittest discover tests -v
 
-  # style:
-  #   name: Style
-  #   runs-on: ubuntu-latest
-  #
-  #   steps:
-  #
-  #     - name: Lint with flake8
-  #       run: |
-  #         # stop the build if there are Python syntax errors or undefined names
-  #         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-  #         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-  #         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+  style:
+    name: Style
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          # Install a specific version of uv.
+          version: "0.8.5"
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install Ruff
+        run: uv tool install ruff@latest
+
+      - name: Check formatting
+        run: ruff check .
+
+      # - name: Lint with flake8
+      #   run: |
+      #     # stop the build if there are Python syntax errors or undefined names
+      #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+      #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+      #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
