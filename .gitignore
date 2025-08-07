@@ -181,6 +181,4 @@ cython_debug/
 .pypirc
 
 # Node stuff
-package.json
-package-lock.json
 node_modules/
