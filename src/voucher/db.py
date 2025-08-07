@@ -19,17 +19,17 @@ class DB():
         if db_auth_token:
             self.engine = create_engine(
                     # TODO - if embedded needed
-                    # "sqlite+libsql:///embedded.db", 
-                    # connect_args={
-                    #     "auth_token": db_auth_token,
-                    #     "sync_url": db_url,
-                    #     },
-                    # echo=verbose)
-                    f'sqlite+{db_url}?secure=true',
+                    "sqlite+libsql:///embedded.db", 
                     connect_args={
-                            "auth_token" : db_auth_token,
-                            },
-                    )
+                        "auth_token": db_auth_token,
+                        "sync_url": db_url,
+                        },
+                    echo=verbose)
+                    # f'sqlite+{db_url}?secure=true',
+                    # connect_args={
+                    #         "auth_token" : db_auth_token,
+                    #         },
+                    # )
         else:
             self.engine = create_engine(
                     f'sqlite+libsql:///{db_url}', 
