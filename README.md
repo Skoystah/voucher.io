@@ -2,6 +2,36 @@
 
 A web application to retrieve and manage available parking vouchers for Leuven.
 
+## Context
+
+I have created this application as a learning project to get in touch with various
+subjects in development. This explains some architectural decisions, that might seem 
+overkill for an application this small (e.g. Alembic database migrations, distributed Turso database, ...).
+My goal was to create a full end-to-end application, including continuous integration and deployment, 
+and some bells and whistles. 
+
+Subjects that I have learned about:
+
+ - **Python** : Create a full OOP application.
+ - **Javascript** : Basic Javascript to provide interaction between frontend and my REST API
+ - **ORM** : Integration of SQL Alchemy and Mapped classes to represent my data.
+ - **HTML/CSS** : Creating a basic web page with basic layout to display and manage my data.
+ - **TDD** : Using TDD for a large part of my development in order to have good working Unit tests for the whole scope.
+ - **CI/CD** : A basic workflow using GitHub Actions with automated unit tests, formatting and deployment to Google Cloud
+ - **Google Cloud** : Deploying the application on Google Cloud automatically from GitHub (push not pull)
+ - **HTTP server** : Creating an HTTP server from scratch using the Python bare http.server library. 
+ This is not useable in production but provides a more in depth learning experience. 
+
+What I still want to explore further:
+
+- **More HTML/CSS** : Further polish my frontend part to have a basic yet good looking and user friendly page.
+- **Security** : Add an authentication layer, so only selected users may manage vouchers. Optionally
+extend this system to a limited set of other users.
+- **Features** : Add more features to the application (e.g. add vouchers, remove vouchers, ...), which are now
+only accessible through the Command Line Interface.
+- **Python tools** : Explore other Python tools (e.g. PyTest, MyPy, FastAPI or Flask)
+
+
 ## Features
 
 - Retrieve a list of parking vouchers usable for SMS parking in Leuven

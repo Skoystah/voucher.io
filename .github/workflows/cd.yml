@@ -6,6 +6,7 @@ on:
 
 jobs:
   deploy:
+    needs: [tests, style]
     name: Deploy
     runs-on: ubuntu-latest
 

@@ -4,6 +4,7 @@ import sys
 from config import Config
 from dotenv import load_dotenv
 import os
+from voucher.db import DB
 
 
 def main():
@@ -12,7 +13,10 @@ def main():
     db_url = os.getenv("DATABASE_URL")
     db_auth_token = os.getenv("DATABASE_AUTH_TOKEN")
 
-    config = Config(db_url=db_url, db_auth_token=db_auth_token)
+    if db_url is None:
+        raise Exception("DB Url is missing")
+
+    config = Config(db=DB(db_url, db_auth_token, verbose=True))
 
     args = sys.argv
     print(args)

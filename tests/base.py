@@ -1,13 +1,13 @@
 import unittest
 from config import Config
-import voucher.db as db
+from voucher.db import DB
 import os
 
 class BaseTestClass(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.config = Config(db_url="test_voucher.db", verbose=False)
-        self.db = db.DB("test_voucher.db", verbose=False)
+        self.config = Config(DB("test_voucher.db", verbose=False))
+        self.db = self.config.db
 
     def tearDown(self) -> None:
         # self.db.engine.dispose()

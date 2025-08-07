@@ -40,7 +40,8 @@ class DB():
                 # Maybe there is a more elegant solution (get object again from database? ...)
                 session.commit()
                 # session.expunge(voucher)
-            except IntegrityError:
+            # TODO _ better way? SQLite returns IntegrityError while Turso returns ValueError!
+            except (IntegrityError, ValueError):
                 session.rollback()
                 raise KeyError("Voucher already exists")
             

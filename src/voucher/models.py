@@ -9,14 +9,14 @@ class Duration(str, Enum):
 
 class VoucherDB():
     def __init__(self, config):
-        self.db = db.DB(db_url=config.db_url, db_auth_token=config.db_auth_token, verbose=config.verbose)
+        #TODO - still needed to have this here? Why not take from config directly?
+        self.db = config.db
 
     def add_voucher(self, voucher):
         if voucher.duration not in Duration:
             raise ValueError('Voucher duration not allowed')
 
-        # TODO validate voucher code length?
-
+        # TODO validate voucher code length? Not sure whether the length is always the same
         voucher.code = voucher.code.upper()
         self.db.add_voucher(voucher)
 
