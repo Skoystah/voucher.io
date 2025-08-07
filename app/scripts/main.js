@@ -44,7 +44,7 @@ async function getVouchers() {
 async function useVoucher(code) {
     console.log(`Using voucher ${code}`);
 
-    const url = `http://${window.location.hostname}:8000/vouchers/${code}`;
+    // const url = `http://${window.location.hostname}:8000/vouchers/${code}`;
     const request = new Request(
         url,
         {
@@ -137,6 +137,7 @@ getVoucherSubmit.addEventListener("click", () => {
     getVouchers();
 });
 
+// TODO - ENV VARIABLE
 const url = `https://voucher-io-881141325435.europe-west1.run.app`;
 
 // ON LOADING
