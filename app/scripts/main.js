@@ -19,9 +19,8 @@ async function getVouchers() {
         }
     }
 
-    // let url = `http://${window.location.hostname}:8000/vouchers`;
-    //let url = `https://added-inessa-skoystah-6cf66432.koyeb.app/vouchers`;
     const query = params.toString();
+    let url = base_url.concat("/vouchers")
     if (query) {
         url = url.concat("?", query);
     }
@@ -44,7 +43,7 @@ async function getVouchers() {
 async function useVoucher(code) {
     console.log(`Using voucher ${code}`);
 
-    // const url = `http://${window.location.hostname}:8000/vouchers/${code}`;
+    let url = base_url.concat("/vouchers/", code)
     const request = new Request(
         url,
         {
@@ -138,7 +137,7 @@ getVoucherSubmit.addEventListener("click", () => {
 });
 
 // TODO - ENV VARIABLE
-const url = `https://voucher-io-881141325435.europe-west1.run.app`;
+const base_url = `https://voucher-io-881141325435.europe-west1.run.app`;
 
 // ON LOADING
 getVouchers();
