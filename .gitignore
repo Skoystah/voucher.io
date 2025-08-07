@@ -1,5 +1,6 @@
 # Databases
 *.db
+embedded.*
 
 # Input data
 data/
