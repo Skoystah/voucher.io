@@ -28,7 +28,6 @@ target_metadata = Base.metadata
 load_dotenv()
 db_url = getenv("DATABASE_URL")
 db_auth_token = getenv("DATABASE_AUTH_TOKEN")
-db_url_embedded = "sqlite+libsql:///embedded.db"
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -42,15 +41,13 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    # url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=db_url_embedded,
+        url=f'sqlite+{db_url}?secure=true',
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         connect_args={
             "auth_token": db_auth_token,
-            "sync_url": db_url,
             },
     )
 
