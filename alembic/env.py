@@ -1,5 +1,7 @@
 from logging.config import fileConfig
+from os import getenv
 
+from dotenv import load_dotenv
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
@@ -23,8 +25,10 @@ target_metadata = Base.metadata
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-
+load_dotenv()
+db_url = getenv("DATABASE_URL")
+db_auth_token = getenv("DATABASE_AUTH_TOKEN")
+db_url_embedded = "sqlite+libsql:///embedded.db"
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -40,10 +44,14 @@ def run_migrations_offline() -> None:
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=db_url_embedded,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        connect_args={
+            "auth_token": db_auth_token,
+            "sync_url": db_url,
+            },
     )
 
     with context.begin_transaction():
