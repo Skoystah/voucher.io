@@ -46,10 +46,22 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-      - uses: jsmrcaga/action-netlify-deploy@v2.0.0
+      - name: Repository Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
         with:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          install_command: "echo Skipping installing the dependencies"
-          build_command: "echo Skipping building the web files"
-          build_directory: /app
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Netlify
+        run: npm install netlify-cli@17.10.1 -g
+
+      - name: Deploy to Netlify
+        id: netlify_deploy
+        run: |
+          netlify deploy \
+            --dir app \
+            --site ${{ secrets.NETLIFY_SITE_ID }} \
+            --auth ${{ secrets.NETLIFY_AUTH_TOKEN }}
