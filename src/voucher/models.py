@@ -1,4 +1,3 @@
-import voucher.db as db
 from enum import Enum
 
 class Duration(str, Enum):
