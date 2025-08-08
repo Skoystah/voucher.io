@@ -1,3 +1,5 @@
+import { API_URL } from "./config.js";
+
 async function getVouchers() {
     const form = document.getElementById("vouchers-search-form");
     const formInput = new FormData(form);
@@ -137,7 +139,7 @@ getVoucherSubmit.addEventListener("click", () => {
 });
 
 // TODO - ENV VARIABLE
-const base_url = `https://voucher-io-881141325435.europe-west1.run.app`;
+const base_url = API_URL;
 
 // ON LOADING
 getVouchers();
