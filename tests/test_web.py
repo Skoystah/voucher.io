@@ -6,21 +6,33 @@ from web.handlers.voucher import get_vouchers, use_voucher
 
 class TestWeb(BaseTestClass):
     def test_handle_add_voucher(self):
-        vouch = Voucher("LEU123", "1h")
-
+        voucher_codes = [
+                "LEU123",
+                ]
+        voucher_durations = [
+                "1h",
+                ]
         voucherDB = VoucherDB(self.config)
-        voucherDB.add_voucher(vouch)
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            voucherDB.add_voucher(code, duration)
 
         expected_vouch = Voucher("LEU123", "1h")
         self.assertEqual(voucherDB.get_voucher("LEU123"), expected_vouch)
 
     def test_handle_list_voucher(self):
-        vouch = Voucher(code="LEU123", duration="1h")
-        vouch2 = Voucher(code="LEU456", duration="2h")
-
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                ]
         voucherDB = VoucherDB(self.config)
-        voucherDB.add_voucher(vouch)
-        voucherDB.add_voucher(vouch2)
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            voucherDB.add_voucher(code, duration)
 
         expected_vouchers = [
                 Voucher(code="LEU123", duration="1h"),
@@ -30,10 +42,16 @@ class TestWeb(BaseTestClass):
         self.assertEqual(get_vouchers(self.config), expected_vouchers)
 
     def test_handle_use_voucher(self):
-        vouch = Voucher(code="LEU123", duration="1h")
-
+        voucher_codes = [
+                "LEU123",
+                ]
+        voucher_durations = [
+                "1h",
+                ]
         voucherDB = VoucherDB(self.config)
-        voucherDB.add_voucher(vouch)
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            voucherDB.add_voucher(code, duration)
 
         use_voucher(self.config, "LEU123")
 

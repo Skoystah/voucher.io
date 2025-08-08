@@ -1,10 +1,11 @@
+from typing import Callable
 from cli.handlers.exit import handle_exit
 from cli.handlers.help import handle_help
 from cli.handlers.voucher import handle_list_vouchers, handle_use_voucher, handle_add_voucher, handle_add_vouchers_bulk
 
 
 class CliCommand():
-    def __init__(self, name, description, handler_function):
+    def __init__(self, name: str, description: str, handler_function: Callable):
         self.name = name
         self.description = description
         self.handler_function = handler_function

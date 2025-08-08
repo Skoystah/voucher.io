@@ -6,7 +6,6 @@ import http.server
 from web.handler import create_handler
 from base import BaseTestClass
 from voucher.models import VoucherDB
-from voucher.db import Voucher
 
 class TestHTTP(BaseTestClass):
 
@@ -48,8 +47,19 @@ class TestHTTP(BaseTestClass):
 
     def test_handle_list_voucher(self):
 
-        vouch = Voucher(code='LEU123', duration='1h')
-        vouch2 = Voucher(code='LEU456', duration='2h')
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                ]
+
+        voucherDB = VoucherDB(self.config)
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            voucherDB.add_voucher(code, duration)
 
         expected_vouchers = """
         [
@@ -66,17 +76,25 @@ class TestHTTP(BaseTestClass):
         ]
         """
 
-        voucherDB = VoucherDB(self.config)
-        voucherDB.add_voucher(vouch)
-        voucherDB.add_voucher(vouch2)
-
         res = requests.get('http://localhost:8000/vouchers')
         self.assertEqual(res.json(), json.loads(expected_vouchers))
 
     def test_handle_list_filtered_voucher_duration(self):
 
-        vouch = Voucher(code='LEU123', duration='1h')
-        vouch2 = Voucher(code='LEU456', duration='2h')
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                ]
+
+        voucherDB = VoucherDB(self.config)
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            voucherDB.add_voucher(code, duration)
+
 
         expected_vouchers = """
         [
@@ -87,18 +105,26 @@ class TestHTTP(BaseTestClass):
             }
         ]
         """
-
-        voucherDB = VoucherDB(self.config)
-        voucherDB.add_voucher(vouch)
-        voucherDB.add_voucher(vouch2)
 
         res = requests.get('http://localhost:8000/vouchers?duration=2h')
         self.assertEqual(res.json(), json.loads(expected_vouchers))
 
     def test_handle_list_filtered_voucher_used(self):
 
-        vouch = Voucher(code='LEU123', duration='1h')
-        vouch2 = Voucher(code='LEU456', duration='2h')
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                ]
+
+        voucherDB = VoucherDB(self.config)
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            voucherDB.add_voucher(code, duration)
+
 
         expected_vouchers = """
         [
@@ -110,19 +136,26 @@ class TestHTTP(BaseTestClass):
         ]
         """
 
-        voucherDB = VoucherDB(self.config)
-        voucherDB.add_voucher(vouch)
-        voucherDB.add_voucher(vouch2)
         voucherDB.use_voucher("LEU123")
 
         res = requests.get('http://localhost:8000/vouchers?includeUsed=false')
         self.assertEqual(res.json(), json.loads(expected_vouchers))
 
     def test_handle_use_voucher(self):
-        vouch = Voucher(code='LEU123', duration='1h')
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                ]
 
         voucherDB = VoucherDB(self.config)
-        voucherDB.add_voucher(vouch)
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            voucherDB.add_voucher(code, duration)
+
 
         _ = requests.put(f'http://localhost:8000/vouchers/{"LEU123"}')
 

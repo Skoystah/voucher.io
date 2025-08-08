@@ -8,5 +8,4 @@ ADD . /app
 WORKDIR /app
 RUN uv sync --locked --no-dev
 
-# Presuming there is a `my_app` command provided by the project
 CMD ["uv", "run", "src/main.py"]

@@ -11,9 +11,7 @@ class TestDB(BaseTestClass):
         voucher_code = "LEU123"
         voucher_duration = "1h"
         
-        voucher = Voucher(voucher_code, voucher_duration)
-
-        self.db.add_voucher(voucher)
+        self.db.add_voucher(voucher_code, voucher_duration)
 
         with Session(self.db.engine) as session:
             expected_voucher = Voucher(voucher_code, voucher_duration, False)
@@ -24,21 +22,16 @@ class TestDB(BaseTestClass):
         voucher_code = "LEU123"
         voucher_duration = "1h"
         
-        voucher = Voucher(voucher_code, voucher_duration)
-
-        self.db.add_voucher(voucher)
+        self.db.add_voucher(voucher_code, voucher_duration)
 
         with self.assertRaises(KeyError):
-            duplicate_voucher = Voucher(voucher_code, voucher_duration)
-            self.db.add_voucher(duplicate_voucher)
+            self.db.add_voucher(voucher_code, voucher_duration)
 
     def test_get_voucher(self):
         voucher_code = "LEU123"
         voucher_duration = "1h"
         
-        voucher = Voucher(voucher_code, voucher_duration)
-
-        self.db.add_voucher(voucher)
+        self.db.add_voucher(voucher_code, voucher_duration)
 
         expected_voucher = Voucher(voucher_code, voucher_duration, False)
         self.assertEqual(self.db.get_voucher(expected_voucher.code), expected_voucher)
@@ -49,9 +42,7 @@ class TestDB(BaseTestClass):
         other_voucher_code = "LEU666"
         voucher_duration = "1h"
         
-        voucher = Voucher(voucher_code, voucher_duration)
-
-        self.db.add_voucher(voucher)
+        self.db.add_voucher(voucher_code, voucher_duration)
 
         with self.assertRaises(KeyError):
             self.db.get_voucher(other_voucher_code)
@@ -60,9 +51,7 @@ class TestDB(BaseTestClass):
         voucher_code = "LEU123"
         voucher_duration = "1h"
         
-        voucher = Voucher(voucher_code, voucher_duration)
-
-        self.db.add_voucher(voucher)
+        self.db.add_voucher(voucher_code, voucher_duration)
 
         self.db.use_voucher(voucher_code)
 
@@ -73,9 +62,7 @@ class TestDB(BaseTestClass):
         other_voucher_code = "LEU666"
         voucher_duration = "1h"
         
-        voucher = Voucher(voucher_code, voucher_duration)
-
-        self.db.add_voucher(voucher)
+        self.db.add_voucher(voucher_code, voucher_duration)
 
         with self.assertRaises(KeyError):
             self.db.use_voucher(other_voucher_code)
@@ -94,8 +81,7 @@ class TestDB(BaseTestClass):
                 ]
 
         for code, duration in zip(voucher_codes, voucher_durations):
-            self.db.add_voucher(Voucher(code, duration))
-
+            self.db.add_voucher(code, duration)
 
         expected_duration = "2h"
         expected_vouchers = []
@@ -119,7 +105,7 @@ class TestDB(BaseTestClass):
                 ]
 
         for code, duration in zip(voucher_codes, voucher_durations):
-            self.db.add_voucher(Voucher(code, duration))
+            self.db.add_voucher(code, duration)
 
         used_code = voucher_codes[1]
         self.db.use_voucher(used_code)

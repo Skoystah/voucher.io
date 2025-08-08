@@ -1,8 +1,8 @@
 from voucher.models import VoucherDB
-from voucher.db import Voucher
+from config import Config
 import os
 
-def handle_list_vouchers(config, *args):
+def handle_list_vouchers(config: Config, *args) -> None:
     voucherDB = VoucherDB(config)
 
     #todo add arguments
@@ -18,7 +18,7 @@ def handle_list_vouchers(config, *args):
 
 
 
-def handle_add_voucher(config, *args):
+def handle_add_voucher(config: Config, *args) -> None:
     print("Add voucher code:")
     code = input()
     #TO-DO - input validation on code
@@ -43,15 +43,14 @@ c) 4h
             duration = "1h"
 
     voucherDB = VoucherDB(config)
-    new_voucher = Voucher(code,duration) 
 
     try:
-        voucherDB.add_voucher(new_voucher)
+        new_voucher = voucherDB.add_voucher(code,duration)
         print(f"Added voucher {new_voucher}")
     except Exception as e:
         print(f"Error - {e}")
 
-def handle_add_vouchers_bulk(config, *args) -> None:
+def handle_add_vouchers_bulk(config: Config, *args) -> None:
     if len(args) == 0:
         print("File name required")
         return
@@ -68,18 +67,17 @@ def handle_add_vouchers_bulk(config, *args) -> None:
     with open(file_name, 'r') as f:
         for line in f:
             code, duration = line.strip().split(';')
-            # print(code, duration)
             try:
-                voucherDB.add_voucher(Voucher(code, duration))
+                new_voucher = voucherDB.add_voucher(code, duration)
                 added_count += 1
-                print(f"Added voucher {code} with duration {duration}")
+                print(f"Added voucher {new_voucher}")
             except Exception as e:
                 print(f"Error adding voucher {code}: {e}")
 
     print(f'Successfully added {added_count} vouchers')
 
 
-def handle_use_voucher(config, *args) -> None:
+def handle_use_voucher(config: Config, *args) -> None:
     if len(args) == 0:
         print("Voucher code required")
         return

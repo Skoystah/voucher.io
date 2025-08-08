@@ -1,3 +1,4 @@
+from typing import List, Optional
 from sqlalchemy import Boolean, CheckConstraint, String, create_engine, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass, Session, mapped_column, Mapped
@@ -9,22 +10,25 @@ class Voucher(Base):
     __tablename__ = "voucher"
 
     code: Mapped[str] = mapped_column(primary_key=True)
-    duration: Mapped[str] = mapped_column(String(2), CheckConstraint("duration in ('1h','2h','4h', '12h')", name="ck_duration"))
-    used: Mapped[bool] = mapped_column(Boolean, CheckConstraint("used in (0,1)", name="ck_voucher_used"), default=False)
+    duration: Mapped[str] = mapped_column(String(2), 
+                                          CheckConstraint("duration in ('1h','2h','4h', '12h')", 
+                                                          name="ck_duration"))
+    used: Mapped[bool] = mapped_column(Boolean, 
+                                       CheckConstraint("used in (0,1)", 
+                                                       name="ck_voucher_used"), 
+                                       default=False)
     
 
 class DB():
-    def __init__(self, db_url="voucher.db", db_auth_token=None, verbose=True):
+    def __init__(self, 
+                 db_url: str ="voucher.db", 
+                 db_auth_token: Optional[str] = None, 
+                 verbose: Optional[bool] =True):
+
         # TODO more elegant way to decide between local and remote?
         if db_auth_token:
+            # For now chosen remote only DB - can also be changed to embedded (local copy + remote)
             self.engine = create_engine(
-                    # TODO - if embedded needed
-                    # "sqlite+libsql:///embedded.db", 
-                    # connect_args={
-                    #     "auth_token": db_auth_token,
-                    #     "sync_url": db_url,
-                    #     },
-                    # echo=verbose)
                     f'sqlite+{db_url}?secure=true',
                     connect_args={
                             "auth_token" : db_auth_token,
@@ -39,21 +43,24 @@ class DB():
 
         Base.metadata.create_all(self.engine) 
 
-    def add_voucher(self, voucher):
+    def add_voucher(self, 
+                    code: str,
+                    duration: str) -> Voucher:
+
         with Session(self.engine) as session:
             try:
-                session.add(voucher)
-                # Expunging the object (removing from session) - otherwise its no longer available after flush
-                # Maybe there is a more elegant solution (get object again from database? ...)
+                session.add(Voucher(code, duration))
                 session.commit()
-                # session.expunge(voucher)
+                return session.get(Voucher, code)
             # TODO _ better way? SQLite returns IntegrityError while Turso returns ValueError!
             except (IntegrityError, ValueError):
                 session.rollback()
                 raise KeyError("Voucher already exists")
             
 
-    def get_voucher(self, code):
+    def get_voucher(self, 
+                    code: str) -> Voucher:
+
         with Session(self.engine) as session:
             voucher = session.get(Voucher, code)
             if voucher is None:
@@ -61,12 +68,23 @@ class DB():
             
             return voucher
 
-    def get_vouchers(self, **kwargs):
+    def get_vouchers(self, 
+                     duration: Optional[str] = None, 
+                     used: Optional[bool] = None) -> List[Voucher]:
+
+        filters = {}
+        if duration:
+            filters['duration'] = duration
+        if used is not None:
+            filters['used'] = used
+
         with Session(self.engine) as session:
-            vouchers = session.scalars(select(Voucher).filter_by(**kwargs))
+            vouchers = session.scalars(select(Voucher).filter_by(**filters))
             return list(vouchers)
 
-    def use_voucher(self, code):
+    def use_voucher(self, 
+                    code: str) -> Voucher:
+
         with Session(self.engine) as session:
             voucher = session.get(Voucher, code)
             if voucher is None:
@@ -74,7 +92,7 @@ class DB():
 
             voucher.used = True
             session.commit()
-            # session.expunge(voucher)
+
             return voucher
 
 

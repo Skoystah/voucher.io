@@ -19,6 +19,7 @@ class TestCLI(BaseTestClass):
             self.assertIn("exit", output)
             self.assertIn("list", output)
             self.assertIn("add", output)
+            self.assertIn("add-bulk", output)
 
     def test_handle_add_voucher(self):
         vouch = Voucher("LEU123", "1h")
@@ -34,15 +35,23 @@ class TestCLI(BaseTestClass):
 
     def test_handle_list_voucher(self):
 
-        vouch = Voucher("LEU123", "1h")
-        vouch2 = Voucher("LEU456", "2h")
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                ]
 
         voucherDB = VoucherDB(self.config)
-        voucherDB.add_voucher(vouch)
-        voucherDB.add_voucher(vouch2)
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            voucherDB.add_voucher(code, duration)
 
         expected_vouch = Voucher("LEU123", "1h")
         expected_vouch2 = Voucher("LEU456", "2h")
+
         with patch('sys.stdout', new=io.StringIO()) as dummy_stdout:
             handle_list_vouchers(self.config)
 
@@ -53,15 +62,23 @@ class TestCLI(BaseTestClass):
 
     def test_handle_use_voucher(self):
 
-        vouch = Voucher("LEU123", "1h")
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                ]
 
         voucherDB = VoucherDB(self.config)
-        voucherDB.add_voucher(vouch)
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            voucherDB.add_voucher(code, duration)
 
         handle_use_voucher(self.config, "LEU123")
 
         self.assertEqual(voucherDB.get_voucher("LEU123").used, True)
-
 
     def test_handle_add_vouchers_bulk(self):
         vouchers = [
@@ -79,11 +96,9 @@ class TestCLI(BaseTestClass):
             for voucher in vouchers:
                 file.write(f'{voucher[0]};{voucher[1]}\n')
 
-
         handle_add_vouchers_bulk(self.config, "test_handle_add_voucher_bulk.csv")
 
         voucherDB = VoucherDB(self.config)
-
         expected_vouchers = []
         for code, duration in vouchers:
             expected_vouchers.append(Voucher(code,duration))

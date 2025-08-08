@@ -1,7 +1,7 @@
 import cli.clicommands as clicommands
 from config import Config
 
-def start(config: Config):
+def start(config: Config) -> None:
 
     commands = clicommands.get_commands()
 
