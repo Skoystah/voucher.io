@@ -133,6 +133,16 @@ class TestVouchers(BaseTestClass):
 
         self.assertEqual(self.db.get_voucher(voucher_code).used, True)
         
+    def test_delete_voucher(self):
+        voucher_code = "LEU123"
+        voucher_duration = "1h"
+        voucherDB = VoucherDB(self.config)
+        self.db.add_voucher(voucher_code, voucher_duration)
+
+        voucherDB.delete_voucher(voucher_code)
+
+        with self.assertRaises(KeyError):
+            self.db.get_voucher(voucher_code)
 
 if __name__ == "__main__":
     unittest.main()

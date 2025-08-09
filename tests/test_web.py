@@ -39,7 +39,7 @@ class TestWeb(BaseTestClass):
                 Voucher(code="LEU456", duration="2h")
                 ]
 
-        self.assertEqual(get_vouchers(self.config), expected_vouchers)
+        self.assertEqual(get_vouchers(self.config, {}), expected_vouchers)
 
     def test_handle_use_voucher(self):
         voucher_codes = [

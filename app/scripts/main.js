@@ -64,6 +64,28 @@ async function useVoucher(code) {
     }
 }
 
+async function deleteVoucher(code) {
+    console.log(`Deleting voucher ${code}`);
+
+    let url = base_url.concat("/vouchers/", code)
+    const request = new Request(
+        url,
+        {
+            method: "DELETE",
+        }
+    );
+
+    try {
+        const response = await fetch(request);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        // getVouchers();
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
 function translateUsedAvailable(used) {
     return used ? "no" : "yes";
 }
@@ -129,9 +151,35 @@ function presentVouchers(data) {
                 };
             });
             voucherTableRow.appendChild(useButton);
+        } else {
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Remove voucher";
+            deleteButton.addEventListener("click", async () => {
+                if (window.confirm("Are you sure you want to permanently REMOVE this voucher?")) {
+                    await deleteVoucher(item.code);
+                    // TODO - acceptable to fetch all again?
+                    getVouchers();
+                };
+            });
+            voucherTableRow.appendChild(deleteButton);
         }
     }
 }
+
+function changeHeader(header) {
+    return new Promise(() => {
+        setTimeout(() => {
+            header.style.visibility = header.style.visibility = "hidden" ? "visible" : "hidden";
+        },
+            1000);
+    })
+}
+
+async function blinkHeader() {
+    const header = document.querySelector("h1")
+    await changeHeader(header);
+}
+
 
 const getVoucherSubmit = document.querySelector(".getVoucherSubmit");
 getVoucherSubmit.addEventListener("click", () => {
@@ -143,3 +191,4 @@ const base_url = API_URL;
 
 // ON LOADING
 getVouchers();
+blinkHeader();

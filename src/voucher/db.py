@@ -1,6 +1,6 @@
 from typing import List, Optional
 from sqlalchemy import Boolean, CheckConstraint, String, create_engine, select
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import DatabaseError, IntegrityError
 from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass, Session, mapped_column, Mapped
 
 class Base(MappedAsDataclass, DeclarativeBase):
@@ -51,7 +51,12 @@ class DB():
             try:
                 session.add(Voucher(code, duration))
                 session.commit()
-                return session.get(Voucher, code)
+
+                added_voucher =  session.get(Voucher, code)
+                if added_voucher:
+                    return added_voucher
+                else:
+                    raise ValueError("Voucher could not be added")
             # TODO _ better way? SQLite returns IntegrityError while Turso returns ValueError!
             except (IntegrityError, ValueError):
                 session.rollback()
@@ -95,6 +100,13 @@ class DB():
 
             return voucher
 
-
+    def delete_voucher(self,
+                       code: str) -> None:
+        with Session(self.engine) as session:
+            voucher = session.get(Voucher, code)
+            if voucher is None:
+                raise KeyError("Voucher does not exist")
+            session.delete(voucher)
+            session.commit()
 
 

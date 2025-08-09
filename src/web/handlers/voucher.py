@@ -1,13 +1,13 @@
-from typing import List
+from typing import Any, Dict, List
 from config import Config
 from voucher.db import Voucher
 from voucher.models import VoucherDB
 
 
-def get_vouchers(config: Config, **kwargs) -> List[Voucher]:
+def get_vouchers(config: Config, query_para: Dict[str,Any]) -> List[Voucher]:
 
     duration, used = None, None
-    for key, value in kwargs.items():
+    for key, value in query_para.items():
         match key:
             case "includeUsed":
                 if value != "true":
@@ -47,4 +47,8 @@ def use_voucher(config: Config, code: str) -> None:
     voucherDB = VoucherDB(config)
     voucherDB.use_voucher(code)
 
+def delete_voucher(config: Config, code: str) -> None:
+
+    voucherDB = VoucherDB(config)
+    voucherDB.delete_voucher(code)
 

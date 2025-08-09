@@ -35,7 +35,6 @@ class TestDB(BaseTestClass):
 
         expected_voucher = Voucher(voucher_code, voucher_duration, False)
         self.assertEqual(self.db.get_voucher(expected_voucher.code), expected_voucher)
-        print(self.db.get_voucher(voucher_code))
 
     def test_get_voucher_non_existing_error(self):
         voucher_code = "LEU123"
@@ -117,6 +116,27 @@ class TestDB(BaseTestClass):
                 
         self.assertEqual(self.db.get_vouchers(used=False), 
                          expected_vouchers)
+
+    def test_delete_voucher(self):
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                "LEU789"
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                "2h"
+                ]
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            self.db.add_voucher(code, duration)
+
+        deleted_code = voucher_codes[1]
+        self.db.delete_voucher(deleted_code)
+
+        with self.assertRaises(KeyError):
+            self.db.get_voucher(deleted_code)
 
 if __name__ == "__main__":
     unittest.main()

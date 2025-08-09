@@ -36,4 +36,7 @@ class VoucherDB():
     def use_voucher(self, code: str) -> None:
         self.db.use_voucher(code.upper())   
 
+    def delete_voucher(self, code: str) -> None:
+        self.db.delete_voucher(code.upper())
+
 

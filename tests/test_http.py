@@ -162,6 +162,28 @@ class TestHTTP(BaseTestClass):
         self.assertEqual(voucherDB.get_voucher("LEU123").used, True)
 
 
+    def test_handle_delete_voucher(self):
+        voucher_codes = [
+                "LEU123",
+                "LEU456",
+                ]
+        voucher_durations = [
+                "1h",
+                "2h",
+                ]
+
+        voucherDB = VoucherDB(self.config)
+
+        for code, duration in zip(voucher_codes, voucher_durations):
+            voucherDB.add_voucher(code, duration)
+
+        deleted_voucher = voucher_codes[1]
+
+        _ = requests.delete(f'http://localhost:8000/vouchers/{deleted_voucher}')
+
+        with self.assertRaises(KeyError):
+            voucherDB.get_voucher(deleted_voucher)
+
     # Todo add unhappy testcases
 
 
