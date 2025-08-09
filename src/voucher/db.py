@@ -1,6 +1,6 @@
 from typing import List, Optional
 from sqlalchemy import Boolean, CheckConstraint, String, create_engine, select
-from sqlalchemy.exc import DatabaseError, IntegrityError
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass, Session, mapped_column, Mapped
 
 class Base(MappedAsDataclass, DeclarativeBase):
