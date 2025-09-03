@@ -1,37 +1,19 @@
 import json
 import unittest
-import requests
-import threading
-import http.server
-from web.handler import create_handler
+
+from web.app import create_app
 from base import BaseTestClass
 from voucher.models import VoucherDB
+from fastapi.testclient import TestClient
+
 
 class TestHTTP(BaseTestClass):
-
     def setUp(self) -> None:
         super().setUp()
-        server_address = ('', 8000)
-        self.httpd = http.server.HTTPServer(server_address, create_handler(self.config))
-        self.thread = threading.Thread(target=self.httpd.serve_forever)
-        self.thread.start()
-
-        #time.sleep(0.5)
-        
-    def tearDown(self) -> None:
-        super().tearDown()
-        self.httpd.server_close()
-        self.httpd.shutdown()
-        self.thread.join()
+        self.client = TestClient(create_app(self.config))
 
     def test_handle_add_voucher(self):
-
-        vouch = """
-        {
-            "code": "LEU123",
-            "duration": "1h"
-        }
-        """
+        vouch = {"code": "LEU123", "duration": "1h"}
 
         expected_vouch = """
         {
@@ -41,20 +23,20 @@ class TestHTTP(BaseTestClass):
         }
         """
 
-        res = requests.post('http://localhost:8000/vouchers', data=vouch)
+        res = self.client.post("/vouchers", json=vouch)
+        print(res.json())
 
         self.assertEqual(res.json(), json.loads(expected_vouch))
 
     def test_handle_list_voucher(self):
-
         voucher_codes = [
-                "LEU123",
-                "LEU456",
-                ]
+            "LEU123",
+            "LEU456",
+        ]
         voucher_durations = [
-                "1h",
-                "2h",
-                ]
+            "1h",
+            "2h",
+        ]
 
         voucherDB = VoucherDB(self.config)
 
@@ -76,25 +58,24 @@ class TestHTTP(BaseTestClass):
         ]
         """
 
-        res = requests.get('http://localhost:8000/vouchers')
+        res = self.client.get("/vouchers")
+
         self.assertEqual(res.json(), json.loads(expected_vouchers))
 
     def test_handle_list_filtered_voucher_duration(self):
-
         voucher_codes = [
-                "LEU123",
-                "LEU456",
-                ]
+            "LEU123",
+            "LEU456",
+        ]
         voucher_durations = [
-                "1h",
-                "2h",
-                ]
+            "1h",
+            "2h",
+        ]
 
         voucherDB = VoucherDB(self.config)
 
         for code, duration in zip(voucher_codes, voucher_durations):
             voucherDB.add_voucher(code, duration)
-
 
         expected_vouchers = """
         [
@@ -106,25 +87,24 @@ class TestHTTP(BaseTestClass):
         ]
         """
 
-        res = requests.get('http://localhost:8000/vouchers?duration=2h')
+        res = self.client.get("/vouchers?duration=2h")
+
         self.assertEqual(res.json(), json.loads(expected_vouchers))
 
     def test_handle_list_filtered_voucher_used(self):
-
         voucher_codes = [
-                "LEU123",
-                "LEU456",
-                ]
+            "LEU123",
+            "LEU456",
+        ]
         voucher_durations = [
-                "1h",
-                "2h",
-                ]
+            "1h",
+            "2h",
+        ]
 
         voucherDB = VoucherDB(self.config)
 
         for code, duration in zip(voucher_codes, voucher_durations):
             voucherDB.add_voucher(code, duration)
-
 
         expected_vouchers = """
         [
@@ -138,39 +118,38 @@ class TestHTTP(BaseTestClass):
 
         voucherDB.use_voucher("LEU123")
 
-        res = requests.get('http://localhost:8000/vouchers?includeUsed=false')
+        res = self.client.get("/vouchers?includeUsed=false")
+
         self.assertEqual(res.json(), json.loads(expected_vouchers))
 
     def test_handle_use_voucher(self):
         voucher_codes = [
-                "LEU123",
-                "LEU456",
-                ]
+            "LEU123",
+            "LEU456",
+        ]
         voucher_durations = [
-                "1h",
-                "2h",
-                ]
+            "1h",
+            "2h",
+        ]
 
         voucherDB = VoucherDB(self.config)
 
         for code, duration in zip(voucher_codes, voucher_durations):
             voucherDB.add_voucher(code, duration)
 
-
-        _ = requests.put(f'http://localhost:8000/vouchers/{"LEU123"}')
+        _ = self.client.put(f"/vouchers/{'LEU123'}")
 
         self.assertEqual(voucherDB.get_voucher("LEU123").used, True)
 
-
     def test_handle_delete_voucher(self):
         voucher_codes = [
-                "LEU123",
-                "LEU456",
-                ]
+            "LEU123",
+            "LEU456",
+        ]
         voucher_durations = [
-                "1h",
-                "2h",
-                ]
+            "1h",
+            "2h",
+        ]
 
         voucherDB = VoucherDB(self.config)
 
@@ -179,7 +158,7 @@ class TestHTTP(BaseTestClass):
 
         deleted_voucher = voucher_codes[1]
 
-        _ = requests.delete(f'http://localhost:8000/vouchers/{deleted_voucher}')
+        _ = self.client.delete(f"http://localhost:8000/vouchers/{deleted_voucher}")
 
         with self.assertRaises(KeyError):
             voucherDB.get_voucher(deleted_voucher)
@@ -187,5 +166,5 @@ class TestHTTP(BaseTestClass):
     # Todo add unhappy testcases
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

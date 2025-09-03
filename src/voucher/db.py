@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from sqlalchemy import Boolean, CheckConstraint, String, create_engine, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass, Session, mapped_column, Mapped
@@ -22,8 +22,8 @@ class Voucher(Base):
 class DB():
     def __init__(self, 
                  db_url: str ="voucher.db", 
-                 db_auth_token: Optional[str] = None, 
-                 verbose: Optional[bool] =True):
+                 db_auth_token: str | None = None, 
+                 verbose: bool | None =True):
 
         # TODO more elegant way to decide between local and remote?
         if db_auth_token:
@@ -74,8 +74,8 @@ class DB():
             return voucher
 
     def get_vouchers(self, 
-                     duration: Optional[str] = None, 
-                     used: Optional[bool] = None) -> List[Voucher]:
+                     duration: str | None = None, 
+                     used: bool | None = None) -> List[Voucher]:
 
         filters = {}
         if duration:

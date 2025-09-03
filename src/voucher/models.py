@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List
 
 from config import Config
 from voucher.db import Voucher
@@ -29,8 +29,8 @@ class VoucherDB():
         return self.db.get_voucher(code)
 
     def get_vouchers(self, 
-                     duration: Optional[str] = None,
-                     used: Optional[bool] = None) -> List[Voucher]:
+                     duration: str | None = None,
+                     used: bool | None = None) -> List[Voucher]:
         return self.db.get_vouchers(duration=duration, used=used)
 
     def use_voucher(self, code: str) -> None:

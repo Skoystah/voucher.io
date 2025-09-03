@@ -1,54 +1,77 @@
-from typing import Any, Dict, List
+from typing import List
+from pydantic import BaseModel
 from config import Config
 from voucher.db import Voucher
-from voucher.models import VoucherDB
+from voucher.models import Duration, VoucherDB
+from fastapi import APIRouter, HTTPException, status
 
 
-def get_vouchers(config: Config, query_para: Dict[str,Any]) -> List[Voucher]:
+class VoucherCreate(BaseModel):
+    duration: Duration
+    code: str
+    used: bool | None = False
 
-    duration, used = None, None
-    for key, value in query_para.items():
-        match key:
-            case "includeUsed":
-                if value != "true":
-                    used = False
-            case "duration":
-                duration = value
-            case _:
-                raise KeyError(f'Filter on {key} not possible')
-                
-    voucherDB = VoucherDB(config)
-    vouchers = voucherDB.get_vouchers(duration=duration, used=used)
 
-    if len(vouchers) == 0:
-        return []
-         
-    return vouchers
+class VoucherResponse(BaseModel):
+    duration: Duration
+    code: str
+    used: bool
 
-def add_voucher(config: Config, **kwargs) -> Voucher:
 
-    if 'duration' in kwargs:
-        duration = kwargs['duration']
-    else:
-        raise ValueError('Missing parameter <duration>')
+def create_voucher_router(config: Config):
+    router = APIRouter()
 
-    if 'code' in kwargs:
-        code = kwargs['code']
-    else:
-        raise ValueError('Missing parameter <code>')
+    @router.get("/vouchers")
+    def get_vouchers(
+        includeUsed: bool | None = False, duration: Duration | None = None
+    ) -> List[Voucher]:
+        used = None
+        if not includeUsed:
+            used = False
 
-    voucherDB = VoucherDB(config)
-    added_voucher = voucherDB.add_voucher(code,duration)
+        voucherDB = VoucherDB(config)
+        vouchers = voucherDB.get_vouchers(duration=duration, used=used)
 
-    return added_voucher
-    
-def use_voucher(config: Config, code: str) -> None:
+        if len(vouchers) == 0:
+            return []
 
-    voucherDB = VoucherDB(config)
-    voucherDB.use_voucher(code)
+        return vouchers
 
-def delete_voucher(config: Config, code: str) -> None:
+    @router.post("/vouchers")
+    def add_voucher(voucher_create: VoucherCreate) -> Voucher:
+        voucherDB = VoucherDB(config)
+        try:
+            added_voucher = voucherDB.add_voucher(
+                voucher_create.code, voucher_create.duration
+            )
+        except (ValueError, KeyError) as e:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Voucher could not be entered: {e}",
+            )
 
-    voucherDB = VoucherDB(config)
-    voucherDB.delete_voucher(code)
+        return added_voucher
 
+    @router.put("/vouchers/{voucher_code}")
+    def use_voucher(voucher_code: str) -> None:
+        voucherDB = VoucherDB(config)
+        try:
+            voucherDB.use_voucher(voucher_code)
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Voucher could not be updated: {e}",
+            )
+
+    @router.delete("/vouchers/{voucher_code}")
+    def delete_voucher(voucher_code: str) -> None:
+        voucherDB = VoucherDB(config)
+        try:
+            voucherDB.delete_voucher(voucher_code)
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Voucher could not be deleted: {e}",
+            )
+
+    return router
