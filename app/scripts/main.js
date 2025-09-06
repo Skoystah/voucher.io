@@ -42,6 +42,36 @@ async function getVouchers() {
     }
 }
 
+async function addVoucher() {
+    const form = document.getElementById("vouchers-add-form");
+    const formInput = new FormData(form);
+
+    let url = base_url.concat("/vouchers")
+    const request = new Request(
+        url,
+        {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify({
+                code: formInput.get("inputCode"),
+                duration: formInput.get("inputDuration"),
+            }),
+        }
+    );
+
+    try {
+        const response = await fetch(request);
+        if (!response.ok) {
+            // if (response.status === 409) {
+            const content = await response.json();
+            throw new Error(content.detail);
+            // throw new Error(`Response status: ${response.status}`);
+            // };
+        }
+    } catch (error) {
+        throw error;
+    }
+}
 async function useVoucher(code) {
     console.log(`Using voucher ${code}`);
 
@@ -83,6 +113,7 @@ async function deleteVoucher(code) {
         // getVouchers();
     } catch (error) {
         console.error(error.message);
+
     }
 }
 
@@ -166,29 +197,35 @@ function presentVouchers(data) {
     }
 }
 
-function changeHeader(header) {
-    return new Promise(() => {
-        setTimeout(() => {
-            header.style.visibility = header.style.visibility = "hidden" ? "visible" : "hidden";
-        },
-            1000);
-    })
-}
-
-async function blinkHeader() {
-    const header = document.querySelector("h1")
-    await changeHeader(header);
-}
+const addVoucherSubmit = document.querySelector(".addVoucherSubmit");
+addVoucherSubmit.addEventListener("click", async () => {
 
 
-const getVoucherSubmit = document.querySelector(".getVoucherSubmit");
-getVoucherSubmit.addEventListener("click", () => {
-    getVouchers();
+    const addVoucherResult = document.getElementById("addVoucherResult");
+    addVoucherResult.textContent = '';
+    addVoucherResult.style.display = 'none';
+
+    if (window.confirm("Are you sure you want to add this voucher?")) {
+        try {
+            await addVoucher();
+            getVouchers();
+        } catch (error) {
+            addVoucherResult.style.color = "red";
+            addVoucherResult.style.display = "block";
+            addVoucherResult.textContent = error.message;
+        }
+    };
 });
+
+const changeFilters = document.querySelectorAll(".filterVoucher");
+for (const filter of changeFilters) {
+    filter.addEventListener("change", () => {
+        getVouchers();
+    });
+}
 
 // TODO - ENV VARIABLE
 const base_url = API_URL;
 
 // ON LOADING
 getVouchers();
-blinkHeader();

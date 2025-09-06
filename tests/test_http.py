@@ -28,6 +28,116 @@ class TestHTTP(BaseTestClass):
 
         self.assertEqual(res.json(), json.loads(expected_vouch))
 
+    def test_handle_add_vouchers_file_csv(self):
+        expected_vouchers = """
+        [
+            {
+                    "code": "LEU5RJ6BXSS",
+                    "duration": "4h",
+                    "used": false
+                    },
+            {
+                    "code": "LEU5RJ6BT34",
+                    "duration": "4h",
+                    "used": false
+                    },
+            {
+                    "code": "LEU5RJ6BHPP",
+                    "duration": "4h",
+                    "used": false
+                    },
+            {
+                    "code": "LEU5RJ6BCCG",
+                    "duration": "4h",
+                    "used": false
+                    },
+            {
+                    "code": "LEU5RJ6BWWF",
+                    "duration": "4h",
+                    "used": false
+                    },
+            {
+                    "code": "LEU5RJ6BHB9",
+                    "duration": "4h",
+                    "used": false
+                    },
+            {
+                    "code": "LEU6J9BWEY8",
+                    "duration": "2h",
+                    "used": false
+                    }
+            ]
+        """
+
+        with open("tests/data/test_vouchers.csv", "rb") as file:
+            res = self.client.post(
+                "/vouchers/upload-file",
+                files={"file": ("test_vouchers.csv", file, "text/csv")},
+            )
+        self.assertEqual(res.json()["created_vouchers"], json.loads(expected_vouchers))
+
+    def test_handle_add_vouchers_file_pdf(self):
+        expected_vouchers = """
+        [
+            {
+                "code": "LEU2CRPG36K",
+                "duration": "2h",
+                "used": false
+                },
+            {
+                "code": "LEU2CRPGPS3",
+                "duration": "2h",
+                "used": false
+                },
+            {
+                "code": "LEU2CRPGWAH",
+                "duration": "2h",
+                "used": false
+                },
+            {
+                "code": "LEU2CRPGGE9",
+                "duration": "2h",
+                "used": false
+                },
+            {
+                "code": "LEU2CRPGXKW",
+                "duration": "2h",
+                "used": false
+                },
+            {
+                "code": "LEU2CRPGLFU",
+                "duration": "2h",
+                "used": false
+                },
+            {
+                "code": "LEU2CRPG2F2",
+                "duration": "2h",
+                "used": false
+                },
+            {
+                "code": "LEU2CRPGHSL",
+                "duration": "2h",
+                "used": false
+                },
+            {
+                "code": "LEU2CRPGUR5",
+                "duration": "2h",
+                "used": false
+                },
+            {
+                "code": "LEU2CRPGVD3",
+                "duration": "2h",
+                "used": false
+                }
+        ]
+        """
+        with open("tests/data/test_vouchers.pdf", "rb") as file:
+            res = self.client.post(
+                "/vouchers/upload-file",
+                files={"file": ("test_vouchers.pdf", file, "application/pdf")},
+            )
+        self.assertEqual(res.json()["created_vouchers"], json.loads(expected_vouchers))
+
     def test_handle_list_voucher(self):
         voucher_codes = [
             "LEU123",

@@ -17,13 +17,6 @@
     <p id="introduction">This application will retrieve available parking vouchers
         for the <span class="zone">LEU1</span> parking zone.</p>
 
-    <!-- List of retrieved vouchers - dynamically populated -->
-    <div id="vouchers-data">
-    </div>
-
-    <br />
-    <br />
-
     <!-- Get vouchers -->
     <div id="vouchers-search">
         <form id="vouchers-search-form">
@@ -31,16 +24,18 @@
             <!-- <input type="text" name="code" required="required" /></title><br /> -->
 
             <p>
-                <label><input type="radio" name="duration" value="any" />Any</label>
-                <label><input type="radio" name="duration" value="1h" />1 hour</label>
-                <label><input type="radio" name="duration" value="2h" />2 hours</label>
-                <label><input type="radio" name="duration" value="4h" />4 hours</label>
-                <label><input type="radio" name="duration" value="12h" />12 hours</label>
+                <select class="filterVoucher" name="duration">
+                    <option value="any" />Any</option>
+                    <option value="1h" />1 hour</option>
+                    <option value="2h" />2 hours</option>
+                    <option value="4h" />4 hours</option>
+                    <option value="12h" />12 hours</option>
+                </select>
+                <input class="filterVoucher" type="checkbox" name="include-used" value=true />Show used vouchers?
             </p>
 
-            <p>
-                <input type="checkbox" name="include-used" value=true />Show used vouchers?
-            </p>
+            <!-- <p> -->
+            <!-- </p> -->
             <!-- Not that user friendly for this! -->
             <!-- <select name="duration" size="3" multiple="multiple"> -->
             <!--     <option value="1h">1 hour</option> -->
@@ -48,10 +43,37 @@
             <!--     <option value="4h">4 hours</option> -->
             <!-- </select> -->
 
-            <button type="button" class="getVoucherSubmit">Search vouchers</button>
+            <!-- <button type="button" class="getVoucherSubmit">Search</button> -->
         </form>
     </div>
     <!-- End of get vouchers form -->
+
+    <!-- List of retrieved vouchers - dynamically populated -->
+    <div id="vouchers-data">
+    </div>
+
+    <hr />
+
+    <div id="vouchers-add">
+        <h3>Add new vouchers:</h3>
+        <form id="vouchers-add-form">
+            <p>
+                <label> Code:
+                    <input name="inputCode" />
+                </label>
+                <select class="voucherProperty" name="inputDuration">
+                    <option value="1h" />1 hour</option>
+                    <option value="2h" />2 hours</option>
+                    <option value="4h" />4 hours</option>
+                    <option value="12h" />12 hours</option>
+                </select>
+                <button type="button" class="addVoucherSubmit">Add</button>
+            </p>
+        </form>
+        <p id="addVoucherResult"></p>
+    </div>
+
+
 </body>
 
 </html>
