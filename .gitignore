@@ -3,7 +3,7 @@
 embedded.*
 
 # Input data
-data/
+# data/
 
 # Ruff
 .ruff_cache/
