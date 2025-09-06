@@ -2,8 +2,6 @@ from voucher.models import VoucherDB
 from voucher.helper import parse_vouchers_file
 from config import Config
 import os
-import re
-from pypdf import PdfReader
 
 
 def handle_list_vouchers(config: Config, *args) -> None:

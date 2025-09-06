@@ -25,7 +25,7 @@ class TestCLI(BaseTestClass):
             self.assertIn("exit", output)
             self.assertIn("list", output)
             self.assertIn("add", output)
-            self.assertIn("add-bulk", output)
+            self.assertIn("add-file", output)
 
     def test_handle_add_voucher(self):
         vouch = Voucher("LEU123", "1h")

@@ -9,6 +9,6 @@ def handle_help(config: Config, *args) -> None:
     list     show available vouchers
     help     show help
     exit     exit program
-    add-file add vouchers in bulk
+    add-file add vouchers from a file
 """
     )
