@@ -36,26 +36,51 @@ async function getVouchers() {
         const data = await response.json()
         console.log(data);
 
-        presentVouchers(data)
+        presentVouchers(data);
     } catch (error) {
         console.error(error.message);
     }
 }
 
-async function addVoucher() {
-    const form = document.getElementById("vouchers-add-form");
-    const formInput = new FormData(form);
+async function addVoucher(input) {
+    const inputCode = input.get("inputCode");
+    const inputDuration = input.get("inputDuration");
 
-    let url = base_url.concat("/vouchers")
+    const url = base_url.concat("/vouchers");
     const request = new Request(
         url,
         {
             method: "POST",
             headers: { 'Content-Type': 'application/json', },
             body: JSON.stringify({
-                code: formInput.get("inputCode"),
-                duration: formInput.get("inputDuration"),
+                code: inputCode,
+                duration: inputDuration,
             }),
+        }
+    );
+
+    try {
+        const response = await fetch(request);
+        if (!response.ok) {
+            // if (response.status === 409) {
+            const content = await response.json();
+            throw new Error(content.detail);
+            // throw new Error(`Response status: ${response.status}`);
+            // };
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function addVouchersFile(input) {
+
+    const url = base_url.concat("/vouchers/upload-file");
+    const request = new Request(
+        url,
+        {
+            method: "POST",
+            body: input,
         }
     );
 
@@ -75,7 +100,7 @@ async function addVoucher() {
 async function useVoucher(code) {
     console.log(`Using voucher ${code}`);
 
-    let url = base_url.concat("/vouchers/", code)
+    const url = base_url.concat("/vouchers/", code)
     const request = new Request(
         url,
         {
@@ -97,7 +122,7 @@ async function useVoucher(code) {
 async function deleteVoucher(code) {
     console.log(`Deleting voucher ${code}`);
 
-    let url = base_url.concat("/vouchers/", code)
+    const url = base_url.concat("/vouchers/", code)
     const request = new Request(
         url,
         {
@@ -200,21 +225,60 @@ function presentVouchers(data) {
 const addVoucherSubmit = document.querySelector(".addVoucherSubmit");
 addVoucherSubmit.addEventListener("click", async () => {
 
-
     const addVoucherResult = document.getElementById("addVoucherResult");
     addVoucherResult.textContent = '';
     addVoucherResult.style.display = 'none';
 
-    if (window.confirm("Are you sure you want to add this voucher?")) {
-        try {
-            await addVoucher();
-            getVouchers();
-        } catch (error) {
+    const form = document.getElementById("vouchers-add-form");
+    const formInput = new FormData(form);
+
+    const inputCode = formInput.get("inputCode");
+    const inputFile = formInput.get("file");
+
+    if (inputFile.name) {
+        if (inputCode) {
             addVoucherResult.style.color = "red";
             addVoucherResult.style.display = "block";
-            addVoucherResult.textContent = error.message;
+            addVoucherResult.textContent = 'Either add a file or add a code and duration';
         }
-    };
+        else if (window.confirm("Are you sure you want to add vouchers from this file?")) {
+            try {
+                await addVouchersFile(formInput);
+                getVouchers();
+                // TODO : feedback on which vouchers were added and which were not
+                addVoucherResult.style.color = "green";
+                addVoucherResult.style.display = "block";
+                addVoucherResult.textContent = 'Successfully added vouchers!';
+                form.reset();
+            } catch (error) {
+                addVoucherResult.style.color = "red";
+                addVoucherResult.style.display = "block";
+                addVoucherResult.textContent = error.message;
+            }
+        };
+    } else {
+        if (!inputCode) {
+            addVoucherResult.style.color = "red";
+            addVoucherResult.style.display = "block";
+            addVoucherResult.textContent = 'Both code and duration need to be provided';
+        }
+        else if (window.confirm("Are you sure you want to add this voucher?")) {
+            try {
+                await addVoucher(formInput);
+                getVouchers();
+                addVoucherResult.style.color = "green";
+                addVoucherResult.style.display = "block";
+                addVoucherResult.textContent = 'Successfully added voucher!';
+                form.reset();
+            } catch (error) {
+                addVoucherResult.style.color = "red";
+                addVoucherResult.style.display = "block";
+                addVoucherResult.textContent = error.message;
+            }
+        };
+    }
+
+
 });
 
 const changeFilters = document.querySelectorAll(".filterVoucher");
