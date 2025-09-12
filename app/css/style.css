@@ -9,13 +9,23 @@ span.zone {
 
 #vouchers-table {
     border-style: double;
-    width: 600px;
+    border-collapse: collapse;
+    /* width: auto; */
+    table-layout: auto;
+    border: 1px solid #ccc;
 }
 
 #vouchers-table th {
     text-transform: uppercase;
     text-align: left;
+    padding-right: 8px;
     border-bottom: 2px double;
+}
+
+#vouchers-table td {
+    border: 1px solid #ddd;
+    padding-right: 8px;
+    text-align: left;
 }
 
 #vouchers-table tr {
