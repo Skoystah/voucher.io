@@ -1,6 +1,4 @@
-import { getVouchers, addVoucher, addVouchersFile, useVoucher, deleteVoucher } from "./api/vouchers.js";
-import { fillVoucherScreen } from "./ui/ui.js";
-
+import { addVoucher, addVouchersFile } from "./api/vouchers.js";
 
 const addVoucherSubmit = document.querySelector(".addVoucherSubmit");
 addVoucherSubmit.addEventListener("click", async () => {
@@ -65,6 +63,3 @@ voucherSearchForm.addEventListener("change", async (evt) => {
         await fillVoucherScreen();
     }
 });
-
-// ON LOADING
-await fillVoucherScreen();
