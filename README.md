@@ -65,7 +65,7 @@ only accessible through the Command Line Interface.
 
 ---
 
-## Quick start
+## Quick Start
 
 ### Requirements
 
