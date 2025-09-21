@@ -11,7 +11,7 @@ A web application to retrieve and manage available parking vouchers for Leuven.
 - CLI interface for admin access
 - Add vouchers in bulk via a csv file (under development)
 
-## Context
+## Motivation / context
 
 I have created this application as a learning project to get in touch with various
 subjects in development. This explains some architectural decisions, that might seem 
@@ -65,7 +65,7 @@ only accessible through the Command Line Interface.
 
 ---
 
-## Getting Started
+## Quick start
 
 ### Requirements
 
@@ -100,6 +100,7 @@ only accessible through the Command Line Interface.
    Simply open `app/index.html` in your browser. It will connect to the backend API.
 
 ---
+## Usage
 
 ## Python REST API
 
@@ -226,6 +227,12 @@ fetch('http://localhost:8000/vouchers/LEU123', { method: 'PUT' });
   - JS: `app/scripts/main.js`
   - CSS: `app/css/style.css`
 - Tests in `/tests`.
+
+---
+
+## Contributing
+
+tbc
 
 ---
 
