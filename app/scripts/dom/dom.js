@@ -1,65 +1,94 @@
-import { addVoucher, addVouchersFile } from "./api/vouchers.js";
+import { addVoucher, addVouchersFile, useVoucher, deleteVoucher } from "../api/vouchers.js";
+import { fillVoucherScreen } from "../ui/ui.js";
 
-const addVoucherSubmit = document.querySelector(".addVoucherSubmit");
-addVoucherSubmit.addEventListener("click", async () => {
+export async function addVoucherHandler() {
 
-    const addVoucherResult = document.getElementById("addVoucherResult");
-    addVoucherResult.textContent = '';
-    addVoucherResult.style.display = 'none';
-
-    const form = document.getElementById("vouchers-add-form");
+    const form = document.querySelector("#vouchers-add-form");
     const formInput = new FormData(form);
 
-    const inputCode = formInput.get("inputCode");
-    const inputFile = formInput.get("file");
+    const inputCode = formInput.get("input-code");
+    const inputFile = formInput.get("input-file");
 
     if (inputFile.name) {
         if (inputCode) {
-            addVoucherResult.style.color = "red";
-            addVoucherResult.style.display = "block";
-            addVoucherResult.textContent = 'Either add a file or add a code and duration';
+            showVoucherResultError('Either add a file or add a code and duration');
         }
         else if (window.confirm("Are you sure you want to add vouchers from this file?")) {
             try {
                 await addVouchersFile(formInput);
                 await fillVoucherScreen();
                 // TODO : feedback on which vouchers were added and which were not
-                addVoucherResult.style.color = "green";
-                addVoucherResult.style.display = "block";
-                addVoucherResult.textContent = 'Successfully added vouchers!';
+                showVoucherResultOk('Successfully added vouchers')
                 form.reset();
             } catch (error) {
-                addVoucherResult.style.color = "red";
-                addVoucherResult.style.display = "block";
-                addVoucherResult.textContent = error.message;
+                showVoucherResultError(error.message);
             }
         };
     } else {
         if (!inputCode) {
-            addVoucherResult.style.color = "red";
-            addVoucherResult.style.display = "block";
-            addVoucherResult.textContent = 'Both code and duration need to be provided';
+            showVoucherResultError('Both code and duration need to be provided');
         }
         else if (window.confirm("Are you sure you want to add this voucher?")) {
             try {
                 await addVoucher(formInput);
                 await fillVoucherScreen();
-                addVoucherResult.style.color = "green";
-                addVoucherResult.style.display = "block";
-                addVoucherResult.textContent = 'Successfully added voucher!';
+                showVoucherResultOk('Successfully added voucher')
                 form.reset();
             } catch (error) {
-                addVoucherResult.style.color = "red";
-                addVoucherResult.style.display = "block";
-                addVoucherResult.textContent = error.message;
+                showVoucherResultError(error.message);
             }
         };
     }
-});
+}
 
-const voucherSearchForm = document.getElementById("vouchers-search-form");
-voucherSearchForm.addEventListener("change", async (evt) => {
-    if (evt.target.className === "filterVoucher") {
-        await fillVoucherScreen();
-    }
-});
+function showVoucherResultOk(message) {
+
+    const addVoucherResult = document.querySelector("#add-voucher-result");
+
+    addVoucherResult.style.color = "green";
+    addVoucherResult.style.display = "block";
+    addVoucherResult.textContent = message;
+}
+
+function showVoucherResultError(message) {
+
+    const addVoucherResult = document.querySelector("#add-voucher-result");
+
+    addVoucherResult.style.color = "red";
+    addVoucherResult.style.display = "block";
+    addVoucherResult.textContent = message;
+}
+
+export function addEventListeners() {
+
+    const voucherSearchForm = document.querySelector("#vouchers-search-form");
+    voucherSearchForm.addEventListener("change", async (evt) => {
+        if (evt.target.className === "filter-voucher") {
+            await fillVoucherScreen();
+        }
+    });
+
+    const addVoucherSubmit = document.querySelector(".add-voucher-submit");
+    addVoucherSubmit.addEventListener("click", async () => {
+        await addVoucherHandler();
+    });
+
+    const vouchersData = document.querySelector("#vouchers-data");
+    vouchersData.addEventListener("click", async (evt) => {
+        console.log("processing event for ", evt);
+        if (evt.target.dataset.action === 'use') {
+            if (window.confirm("Are you sure you want to use this voucher?")) {
+                await useVoucher(evt.target.dataset.voucherCode);
+                // TODO - acceptable to fetch all again?
+                fillVoucherScreen();
+            };
+        }
+        if (evt.target.dataset.action === 'delete') {
+            if (window.confirm("Are you sure you want to permanently REMOVE this voucher?")) {
+                await deleteVoucher(evt.target.dataset.voucherCode);
+                // TODO - acceptable to fetch all again?
+                fillVoucherScreen();
+            };
+        }
+    });
+}

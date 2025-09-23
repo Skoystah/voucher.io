@@ -1,25 +1,28 @@
 import { getVouchers, useVoucher, deleteVoucher } from "../api/vouchers.js";
 
 export async function fillVoucherScreen() {
+
+    const form = document.querySelector("#vouchers-search-form");
+    const formInput = new FormData(form);
+
     try {
-        presentVouchers(await getVouchers());
+        presentVouchers(await getVouchers(formInput));
     } catch (error) {
         console.log("failed to load vouchers :", error);
         presentVouchers([])
     }
 }
-function presentVouchers(data) {
-    const vouchersData = document.getElementById("vouchers-data");
 
-    //remove all existing vouchers
-    while (vouchersData.firstChild) {
-        vouchersData.removeChild(vouchersData.firstChild);
-    }
+function presentVouchers(data) {
+    const vouchersData = document.querySelector("#vouchers-data");
+
+    //remove existing content
+    vouchersData.replaceChildren();
 
     if (data.length === 0) {
         const para = document.createElement("p");
-        para.textContent = "No vouchers found! :(";
-        vouchersData.appendChild(para);
+        para.append("No vouchers found! :(");
+        vouchersData.append(para);
         return;
     }
 
@@ -44,7 +47,7 @@ function presentVouchers(data) {
     voucherTableRow.appendChild(availableHeader);
 
 
-    for (const item of data) {
+    data.forEach(item => {
         const voucherTableRow = document.createElement("tr");
         voucherTable.appendChild(voucherTableRow);
 
@@ -60,30 +63,18 @@ function presentVouchers(data) {
 
         if (!item.used) {
             const useButton = document.createElement("button");
-            useButton.className = "useButton"
+            useButton.className = "use-button"
             useButton.textContent = "Use voucher";
+            useButton.dataset.voucherCode = item.code;
+            useButton.dataset.action = "use";
             voucherTableRow.appendChild(useButton);
         } else {
             const deleteButton = document.createElement("button");
-            deleteButton.className = "deleteButton"
+            deleteButton.className = "delete-button"
             deleteButton.textContent = "Remove voucher";
+            deleteButton.dataset.voucherCode = item.code;
+            deleteButton.dataset.action = "delete";
             voucherTableRow.appendChild(deleteButton);
-        }
-    }
-    vouchersData.addEventListener("click", async (evt) => {
-        if (evt.target.className == "useButton") {
-            if (window.confirm("Are you sure you want to use this voucher?")) {
-                await useVoucher(item.code);
-                // TODO - acceptable to fetch all again?
-                getVouchers();
-            };
-        }
-        if (evt.target.className == "deleteButton") {
-            if (window.confirm("Are you sure you want to permanently REMOVE this voucher?")) {
-                await deleteVoucher(item.code);
-                // TODO - acceptable to fetch all again?
-                getVouchers();
-            };
         }
     });
 }

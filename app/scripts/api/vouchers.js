@@ -1,24 +1,18 @@
 import { API_URL } from "../config.js";
 
-export async function getVouchers() {
-    const form = document.getElementById("vouchers-search-form");
-    const formInput = new FormData(form);
-
+export async function getVouchers(input) {
     let params = new URLSearchParams();
 
-    params.set("includeUsed", "false");
-    for (const [key, value] of formInput) {
-        switch (key) {
-            case "duration":
-                if (value.toLowerCase() === "any") {
-                    break
-                };
-                params.set("duration", value);
-                break;
-            case "include-used":
-                params.set("includeUsed", value);
-                break;
-        }
+    const duration = input.get("duration");
+    if (duration && duration.toLowerCase() !== "any") {
+        params.set("duration", duration)
+    }
+
+    const includeUsed = input.get("include-used");
+    if (includeUsed) {
+        params.set("includeUsed", includeUsed);
+    } else {
+        params.set("includeUsed", "false")
     }
 
     const query = params.toString();
@@ -27,24 +21,19 @@ export async function getVouchers() {
         url = url.concat("?", query);
     }
 
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error(error.message);
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
     }
+    const data = await response.json();
+    return data;
 }
 
 export async function addVoucher(input) {
-    const inputCode = input.get("inputCode");
-    const inputDuration = input.get("inputDuration");
+    const inputCode = input.get("input-code");
+    const inputDuration = input.get("input-duration");
 
-    const url = base_url.concat("/vouchers");
+    const url = API_URL.concat("/vouchers");
     const request = new Request(
         url,
         {
@@ -57,23 +46,17 @@ export async function addVoucher(input) {
         }
     );
 
-    try {
-        const response = await fetch(request);
-        if (!response.ok) {
-            // if (response.status === 409) {
-            const content = await response.json();
-            throw new Error(content.detail);
-            // throw new Error(`Response status: ${response.status}`);
-            // };
-        }
-    } catch (error) {
-        throw error;
-    }
+
+    const response = await fetch(request);
+    // if (!response.ok) {
+    //     const content = await response.json();
+    //     throw new Error(content.detail);
+    // }
 }
 
 export async function addVouchersFile(input) {
 
-    const url = base_url.concat("/vouchers/upload-file");
+    const url = API_URL.concat("/vouchers/upload-file");
     const request = new Request(
         url,
         {
@@ -82,22 +65,15 @@ export async function addVouchersFile(input) {
         }
     );
 
-    try {
-        const response = await fetch(request);
-        if (!response.ok) {
-            // if (response.status === 409) {
-            const content = await response.json();
-            throw new Error(content.detail);
-            // throw new Error(`Response status: ${response.status}`);
-            // };
-        }
-    } catch (error) {
-        throw error;
+    const response = await fetch(request);
+    if (!response.ok) {
+        const content = await response.json();
+        throw new Error(content.detail);
     }
 }
 
 export async function useVoucher(code) {
-    const url = base_url.concat("/vouchers/", code)
+    const url = API_URL.concat("/vouchers/", code)
     const request = new Request(
         url,
         {
@@ -105,18 +81,14 @@ export async function useVoucher(code) {
         }
     );
 
-    try {
-        const response = await fetch(request);
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-    } catch (error) {
-        console.error(error.message);
+    const response = await fetch(request);
+    if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
     }
 }
 
 export async function deleteVoucher(code) {
-    const url = base_url.concat("/vouchers/", code)
+    const url = API_URL.concat("/vouchers/", code)
     const request = new Request(
         url,
         {
@@ -124,12 +96,8 @@ export async function deleteVoucher(code) {
         }
     );
 
-    try {
-        const response = await fetch(request);
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-    } catch (error) {
-        console.error(error.message);
+    const response = await fetch(request);
+    if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
     }
 }

@@ -92,6 +92,9 @@ class DB:
             if voucher is None:
                 raise KeyError("Voucher does not exist")
 
+            if voucher.used:
+                raise ValueError("Voucher was already used")
+
             voucher.used = True
             session.commit()
 

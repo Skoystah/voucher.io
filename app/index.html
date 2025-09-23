@@ -9,7 +9,7 @@
     <link href="css/style.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <script defer type="module" src="scripts/config.js"></script>
-    <script defer type="module" src="scripts/main.js"></script>
+    <script defer type="module" src="scripts/app.js"></script>
 </head>
 
 <body>
@@ -21,14 +21,14 @@
     <div id="vouchers-search">
         <form id="vouchers-search-form">
             <p>
-                <select class="filterVoucher" name="duration">
+                <select class="filter-voucher" name="duration">
                     <option value="any" />Any</option>
                     <option value="1h" />1 hour</option>
                     <option value="2h" />2 hours</option>
                     <option value="4h" />4 hours</option>
                     <option value="12h" />12 hours</option>
                 </select>
-                <input class="filterVoucher" type="checkbox" name="include-used" value=true />Show used vouchers?
+                <input class="filter-voucher" type="checkbox" name="include-used" value=true />Show used vouchers?
             </p>
         </form>
     </div>
@@ -45,9 +45,9 @@
         <form id="vouchers-add-form">
             <p>
                 <label> Code:
-                    <input name="inputCode" />
+                    <input name="input-code" />
                 </label>
-                <select class="voucherProperty" name="inputDuration">
+                <select class="voucher-property" name="input-duration">
                     <option value="1h" />1 hour</option>
                     <option value="2h" />2 hours</option>
                     <option value="4h" />4 hours</option>
@@ -56,14 +56,14 @@
             </p>
             <p>
                 <label for="avatar">Vouchers file (pdf or csv):
-                    <input type="file" id="inputFile" name="file" accept="text/csv, application/pdf" />
+                    <input type="file" name="input-file" accept="text/csv, application/pdf" />
                 </label>
             </p>
             <p>
-                <button type="button" class="addVoucherSubmit">Add vouchers</button>
+                <button type="button" class="add-voucher-submit">Add vouchers</button>
             </p>
         </form>
-        <p id="addVoucherResult"></p>
+        <p id="add-voucher-result"></p>
     </div>
 </body>
 
