@@ -26,6 +26,7 @@ function presentVouchers(data) {
         return;
     }
 
+    //TODO - refactor table creation
     //add voucher table
     const voucherTable = document.createElement("table");
     voucherTable.id = "vouchers-table"
