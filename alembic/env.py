@@ -7,7 +7,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from voucher.db import Base
+from db.models import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -29,6 +29,14 @@ load_dotenv()
 db_url = getenv("DATABASE_URL")
 db_auth_token = getenv("DATABASE_AUTH_TOKEN")
 
+if db_auth_token:
+    custom_url = f"sqlite+{db_url}?secure=true"
+else:
+    custom_url = f"sqlite+libsql:///{db_url}"
+
+config.set_main_option("sqlalchemy.url", custom_url)
+
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
@@ -42,13 +50,13 @@ def run_migrations_offline() -> None:
 
     """
     context.configure(
-        url=f'sqlite+{db_url}?secure=true',
+        # url=f"sqlite+{db_url}?secure=true",
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         connect_args={
             "auth_token": db_auth_token,
-            },
+        },
     )
 
     with context.begin_transaction():
@@ -69,9 +77,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
