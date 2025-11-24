@@ -1,10 +1,12 @@
 from typing import List
 from pydantic import BaseModel
+from user.auth import validate_jwt_token
+from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from config import Config
-from voucher.db import Voucher
+from db.models import Voucher
 from voucher.helper import parse_vouchers_file
 from voucher.models import Duration, VoucherDB
-from fastapi import APIRouter, HTTPException, UploadFile, status
+from fastapi import APIRouter, HTTPException, Request, UploadFile, status
 
 
 class VoucherCreate(BaseModel):
@@ -13,19 +15,30 @@ class VoucherCreate(BaseModel):
     used: bool | None = False
 
 
-# class VoucherResponse(BaseModel):
-#     duration: Duration
-#     code: str
-#     used: bool
-
-
 def create_voucher_router(config: Config):
     router = APIRouter()
 
     @router.get("/vouchers")
     def get_vouchers(
-        includeUsed: bool | None = False, duration: Duration | None = None
+        request: Request,
+        includeUsed: bool | None = False,
+        duration: Duration | None = None,
     ) -> List[Voucher]:
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Authorization header missing",
+            )
+        token = auth_header.removeprefix("Bearer ")
+        try:
+            auth_user = validate_jwt_token(token, config.secret_key)
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Issue with JWT Token: {e}",
+            )
+
         used = None
         if not includeUsed:
             used = False
@@ -38,7 +51,7 @@ def create_voucher_router(config: Config):
 
         return vouchers
 
-    @router.post("/vouchers")
+    @router.post("/vouchers", status_code=HTTP_201_CREATED)
     def add_voucher(voucher_create: VoucherCreate) -> Voucher:
         voucherDB = VoucherDB(config)
         try:
@@ -53,7 +66,7 @@ def create_voucher_router(config: Config):
 
         return added_voucher
 
-    @router.post("/vouchers/upload-file")
+    @router.post("/vouchers/upload-file", status_code=HTTP_201_CREATED)
     def add_vouchers_file(file: UploadFile) -> dict:
         voucherDB = VoucherDB(config)
         file_contents = file.file.read()
@@ -99,7 +112,7 @@ def create_voucher_router(config: Config):
                 detail=f"Voucher could not be updated: {e}",
             )
 
-    @router.delete("/vouchers/{voucher_code}")
+    @router.delete("/vouchers/{voucher_code}", status_code=HTTP_204_NO_CONTENT)
     def delete_voucher(voucher_code: str) -> None:
         voucherDB = VoucherDB(config)
         try:

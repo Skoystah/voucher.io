@@ -17,6 +17,7 @@ class TestCommands(unittest.TestCase):
         self.assertIn("add-file", commands)
         self.assertIn("list", commands)
         self.assertIn("use", commands)
+        self.assertIn("add-user", commands)
 
 
 if __name__ == "__main__":

@@ -7,6 +7,10 @@ from cli.handlers.voucher import (
     handle_add_voucher,
     handle_add_vouchers_file,
 )
+from cli.handlers.user import (
+    handle_add_user,
+    handle_manage_user,
+)
 
 
 class CliCommand:
@@ -45,5 +49,15 @@ def get_commands():
             name="use",
             description="use given voucher",
             handler_function=handle_use_voucher,
+        ),
+        "add-user": CliCommand(
+            name="add-user",
+            description="add a new user",
+            handler_function=handle_add_user,
+        ),
+        "manage-user": CliCommand(
+            name="manage-user",
+            description="manage a user",
+            handler_function=handle_manage_user,
         ),
     }

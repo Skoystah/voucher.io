@@ -5,10 +5,12 @@ def handle_help(config: Config, *args) -> None:
     # TO-DO - do this flexibly based on the commands - pass to *args?
     print(
         """Available commands:
-    add      add a new voucher
-    list     show available vouchers
-    help     show help
-    exit     exit program
-    add-file add vouchers from a file
+    add         add a new voucher
+    list        show available vouchers
+    help        show help
+    exit        exit program
+    add-file    add vouchers from a file
+    add-user    add user
+    manage-user manage user (password)
 """
     )

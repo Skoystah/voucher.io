@@ -11,7 +11,7 @@ from cli.handlers.voucher import (
 )
 from base import BaseTestClass
 from voucher.models import VoucherDB
-from voucher.db import Voucher
+from db.models import Voucher
 
 
 class TestCLI(BaseTestClass):
@@ -26,6 +26,7 @@ class TestCLI(BaseTestClass):
             self.assertIn("list", output)
             self.assertIn("add", output)
             self.assertIn("add-file", output)
+            self.assertIn("add-user", output)
 
     def test_handle_add_voucher(self):
         vouch = Voucher("LEU123", "1h")

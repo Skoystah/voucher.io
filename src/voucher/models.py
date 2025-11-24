@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List
 from config import Config
-from voucher.db import Voucher
+from db.models import Voucher
 
 
 class Duration(str, Enum):

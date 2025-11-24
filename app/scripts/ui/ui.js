@@ -11,6 +11,8 @@ export async function fillVoucherScreen() {
         console.log("failed to load vouchers :", error);
         presentVouchers([])
     }
+
+    showAdminFunction();
 }
 
 function presentVouchers(data) {
@@ -82,4 +84,14 @@ function presentVouchers(data) {
 
 function translateUsedAvailable(used) {
     return used ? "no" : "yes";
+}
+
+function showAdminFunction() {
+    const isAdmin = localStorage.getItem("isAdmin")
+    const addVouchersSection = document.querySelector("#vouchers-add")
+    if (isAdmin === true) {
+        addVouchersSection.style.display = "block";
+    } else {
+        addVouchersSection.style.display = "none";
+    }
 }
