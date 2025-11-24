@@ -13,7 +13,7 @@ def main():
 
     db_url = os.getenv("DATABASE_URL")
     db_auth_token = os.getenv("DATABASE_AUTH_TOKEN")
-    secret_key = os.getenv("SECRET")
+    secret_key = os.getenv("SECRET_KEY")
 
     if secret_key is None:
         raise Exception("Secret key is missing")
