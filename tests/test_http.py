@@ -5,12 +5,15 @@ from web.app import create_app
 from base import BaseTestClass
 from voucher.models import VoucherDB
 from fastapi.testclient import TestClient
+from user.auth import get_jwt_token
 
 
 class TestHTTP(BaseTestClass):
     def setUp(self) -> None:
         super().setUp()
         self.client = TestClient(create_app(self.config))
+        self.token = get_jwt_token("test", self.config.secret_key, 9999)
+        self.headers = {"Authorization": f"Bearer {self.token}"}
 
     def test_handle_add_voucher(self):
         vouch = {"code": "LEU123", "duration": "1h"}
@@ -23,7 +26,7 @@ class TestHTTP(BaseTestClass):
         }
         """
 
-        res = self.client.post("/vouchers", json=vouch)
+        res = self.client.post("/vouchers", json=vouch, headers=self.headers)
         print(res.json())
 
         self.assertEqual(res.json(), json.loads(expected_vouch))
@@ -73,6 +76,7 @@ class TestHTTP(BaseTestClass):
             res = self.client.post(
                 "/vouchers/upload-file",
                 files={"file": ("test_vouchers.csv", file, "text/csv")},
+                headers=self.headers,
             )
         self.assertEqual(res.json()["created_vouchers"], json.loads(expected_vouchers))
 
@@ -135,6 +139,7 @@ class TestHTTP(BaseTestClass):
             res = self.client.post(
                 "/vouchers/upload-file",
                 files={"file": ("test_vouchers.pdf", file, "application/pdf")},
+                headers=self.headers,
             )
         self.assertEqual(res.json()["created_vouchers"], json.loads(expected_vouchers))
 
@@ -168,7 +173,7 @@ class TestHTTP(BaseTestClass):
         ]
         """
 
-        res = self.client.get("/vouchers")
+        res = self.client.get("/vouchers", headers=self.headers)
 
         self.assertEqual(res.json(), json.loads(expected_vouchers))
 
@@ -197,7 +202,7 @@ class TestHTTP(BaseTestClass):
         ]
         """
 
-        res = self.client.get("/vouchers?duration=2h")
+        res = self.client.get("/vouchers?duration=2h", headers=self.headers)
 
         self.assertEqual(res.json(), json.loads(expected_vouchers))
 
@@ -228,7 +233,7 @@ class TestHTTP(BaseTestClass):
 
         voucherDB.use_voucher("LEU123")
 
-        res = self.client.get("/vouchers?includeUsed=false")
+        res = self.client.get("/vouchers?includeUsed=false", headers=self.headers)
 
         self.assertEqual(res.json(), json.loads(expected_vouchers))
 
@@ -247,7 +252,7 @@ class TestHTTP(BaseTestClass):
         for code, duration in zip(voucher_codes, voucher_durations):
             voucherDB.add_voucher(code, duration)
 
-        _ = self.client.put(f"/vouchers/{'LEU123'}")
+        _ = self.client.put(f"/vouchers/{'LEU123'}", headers=self.headers)
 
         self.assertEqual(voucherDB.get_voucher("LEU123").used, True)
 
@@ -268,7 +273,9 @@ class TestHTTP(BaseTestClass):
 
         deleted_voucher = voucher_codes[1]
 
-        _ = self.client.delete(f"http://localhost:8000/vouchers/{deleted_voucher}")
+        _ = self.client.delete(
+            f"http://localhost:8000/vouchers/{deleted_voucher}", headers=self.headers
+        )
 
         with self.assertRaises(KeyError):
             voucherDB.get_voucher(deleted_voucher)

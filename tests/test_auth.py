@@ -1,5 +1,3 @@
-from os import wait
-import time
 import unittest
 from base import BaseTestClass
 from tests.test_data import TEST_USERS
@@ -31,7 +29,7 @@ class Testusers(BaseTestClass):
         user = TEST_USERS[1]
 
         token = get_jwt_token(user.name, self.config.secret_key, 60)
-        decoded = validate_jwt_token(token, self.config.secret_key)
+        _ = validate_jwt_token(token, self.config.secret_key)
 
 
 if __name__ == "__main__":

@@ -89,9 +89,10 @@ function translateUsedAvailable(used) {
 function showAdminFunction() {
     const isAdmin = localStorage.getItem("isAdmin")
     const addVouchersSection = document.querySelector("#vouchers-add")
-    if (isAdmin === true) {
+    if (isAdmin === "true") {
         addVouchersSection.style.display = "block";
     } else {
         addVouchersSection.style.display = "none";
     }
+    console.log(addVouchersSection)
 }

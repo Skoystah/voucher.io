@@ -15,6 +15,25 @@ class VoucherCreate(BaseModel):
     used: bool | None = False
 
 
+def auth_user(request: Request, config: Config) -> str:
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Authorization header missing",
+        )
+    token = auth_header.removeprefix("Bearer ")
+    try:
+        auth_user = validate_jwt_token(token, config.secret_key)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Issue with JWT Token: {e}",
+        )
+
+    return auth_user
+
+
 def create_voucher_router(config: Config):
     router = APIRouter()
 
@@ -24,20 +43,12 @@ def create_voucher_router(config: Config):
         includeUsed: bool | None = False,
         duration: Duration | None = None,
     ) -> List[Voucher]:
-        auth_header = request.headers.get("Authorization")
-        if not auth_header:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Authorization header missing",
-            )
-        token = auth_header.removeprefix("Bearer ")
-        try:
-            auth_user = validate_jwt_token(token, config.secret_key)
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Issue with JWT Token: {e}",
-            )
+        _ = auth_user(request, config)
+        # except Exception as e:
+        #     raise HTTPException(
+        #         status_code=status.HTTP_403_FORBIDDEN,
+        #         detail=f"Issue with JWT Token: {e}",
+        #     )
 
         used = None
         if not includeUsed:
@@ -52,7 +63,9 @@ def create_voucher_router(config: Config):
         return vouchers
 
     @router.post("/vouchers", status_code=HTTP_201_CREATED)
-    def add_voucher(voucher_create: VoucherCreate) -> Voucher:
+    def add_voucher(request: Request, voucher_create: VoucherCreate) -> Voucher:
+        _ = auth_user(request, config)
+
         voucherDB = VoucherDB(config)
         try:
             added_voucher = voucherDB.add_voucher(
@@ -67,7 +80,8 @@ def create_voucher_router(config: Config):
         return added_voucher
 
     @router.post("/vouchers/upload-file", status_code=HTTP_201_CREATED)
-    def add_vouchers_file(file: UploadFile) -> dict:
+    def add_vouchers_file(request: Request, file: UploadFile) -> dict:
+        _ = auth_user(request, config)
         voucherDB = VoucherDB(config)
         file_contents = file.file.read()
 
@@ -102,7 +116,8 @@ def create_voucher_router(config: Config):
         }
 
     @router.put("/vouchers/{voucher_code}")
-    def use_voucher(voucher_code: str) -> None:
+    def use_voucher(request: Request, voucher_code: str) -> None:
+        _ = auth_user(request, config)
         voucherDB = VoucherDB(config)
         try:
             voucherDB.use_voucher(voucher_code)
@@ -113,7 +128,8 @@ def create_voucher_router(config: Config):
             )
 
     @router.delete("/vouchers/{voucher_code}", status_code=HTTP_204_NO_CONTENT)
-    def delete_voucher(voucher_code: str) -> None:
+    def delete_voucher(request: Request, voucher_code: str) -> None:
+        _ = auth_user(request, config)
         voucherDB = VoucherDB(config)
         try:
             voucherDB.delete_voucher(voucher_code)
