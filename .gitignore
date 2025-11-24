@@ -185,3 +185,4 @@ node_modules/
 
 #mac os stuff
 .DS_Store
+backup.txt
