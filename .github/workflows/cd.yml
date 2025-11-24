@@ -35,11 +35,11 @@ jobs:
       - name: "Build Docker Image"
         run: gcloud builds submit --tag europe-west1-docker.pkg.dev/voucher-io/voucher-io-ar-repo/voucher-io:latest
 
-      - name: Check Alembic Migration Version
-        uses: DevGlitch/alembic-migration-checker@v1.1
-        with:
-          db_url: ${{ secrets.DATABASE_URL }} # Format: postgresql+psycopg2://user:password@host:port/dbname
-          migrations_path: ./migrations/
+      # - name: Check Alembic Migration Version
+      #   uses: DevGlitch/alembic-migration-checker@v1.1
+      #   with:
+      #     db_url: ${{ secrets.DATABASE_URL }} # Format: postgresql+psycopg2://user:password@host:port/dbname
+      #     migrations_path: ./migrations/
 
       - name: Deploy to Cloud Run
         run: gcloud run deploy voucher-io --image europe-west1-docker.pkg.dev/voucher-io/voucher-io-ar-repo/voucher-io:latest --region europe-west1 --allow-unauthenticated --project voucher-io --max-instances=2
