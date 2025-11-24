@@ -35,8 +35,12 @@ jobs:
       - name: "Build Docker Image"
         run: gcloud builds submit --tag europe-west1-docker.pkg.dev/voucher-io/voucher-io-ar-repo/voucher-io:latest
 
-      # - name: 'Database migrations'
-      #   run: alembic upgrade head
+      - name: Check Alembic Migrations and Generate SQL
+        uses: OpenMindUA/alembic-actions/review@v1
+        with:
+          dialect: "sqlite"
+          alembic_ini: "alembic.ini"
+          migration_path: "migrations"
 
       - name: Deploy to Cloud Run
         run: gcloud run deploy voucher-io --image europe-west1-docker.pkg.dev/voucher-io/voucher-io-ar-repo/voucher-io:latest --region europe-west1 --allow-unauthenticated --project voucher-io --max-instances=2
