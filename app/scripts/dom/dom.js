@@ -91,4 +91,18 @@ export function addEventListeners() {
             };
         }
     });
+
+    const logout = document.querySelector(".logout");
+    logout.addEventListener("click", logoutHandler);
 }
+
+export function getAuthToken() {
+    return localStorage.getItem("token");
+}
+
+function logoutHandler() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("isAdmin");
+    window.location.reload();
+}
+

@@ -1,6 +1,14 @@
 import { API_URL } from "../config.js";
+import { getAuthToken } from "../dom/dom.js";
+
+function getAuthHeader() {
+    return ['Authorization', `Bearer ${getAuthToken()}`]
+}
 
 export async function getVouchers(input) {
+    const headers = new Headers();
+    headers.append(...getAuthHeader());
+
     let params = new URLSearchParams();
 
     const duration = input.get("duration");
@@ -21,7 +29,15 @@ export async function getVouchers(input) {
         url = url.concat("?", query);
     }
 
-    const response = await fetch(url);
+    const request = new Request(
+        url,
+        {
+            method: "GET",
+            headers: headers,
+        })
+
+
+    const response = await fetch(request);
     if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
     }
@@ -30,6 +46,9 @@ export async function getVouchers(input) {
 }
 
 export async function addVoucher(input) {
+    const headers = new Headers(getAuthHeader());
+    headers.append('Content-Type', 'application/json');
+
     const inputCode = input.get("input-code");
     const inputDuration = input.get("input-duration");
 
@@ -38,7 +57,7 @@ export async function addVoucher(input) {
         url,
         {
             method: "POST",
-            headers: { 'Content-Type': 'application/json', },
+            headers: headers,
             body: JSON.stringify({
                 code: inputCode,
                 duration: inputDuration,
@@ -56,11 +75,14 @@ export async function addVoucher(input) {
 
 export async function addVouchersFile(input) {
 
+    const headers = new Headers(getAuthHeader());
+
     const url = API_URL.concat("/vouchers/upload-file");
     const request = new Request(
         url,
         {
             method: "POST",
+            headers: headers,
             body: input,
         }
     );
@@ -73,11 +95,14 @@ export async function addVouchersFile(input) {
 }
 
 export async function useVoucher(code) {
+    const headers = new Headers(getAuthHeader());
+
     const url = API_URL.concat("/vouchers/", code)
     const request = new Request(
         url,
         {
             method: "PUT",
+            headers: headers,
         }
     );
 
@@ -88,11 +113,14 @@ export async function useVoucher(code) {
 }
 
 export async function deleteVoucher(code) {
+    const headers = new Headers(getAuthHeader());
+
     const url = API_URL.concat("/vouchers/", code)
     const request = new Request(
         url,
         {
             method: "DELETE",
+            headers: headers,
         }
     );
 
