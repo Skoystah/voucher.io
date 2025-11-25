@@ -80,8 +80,8 @@ def create_voucher_router(config: Config):
         return added_voucher
 
     @router.post("/vouchers/upload-file", status_code=HTTP_201_CREATED)
-    def add_vouchers_file(request: Request, file: UploadFile) -> dict:
-        _ = auth_user(request, config)
+    def add_vouchers_file(file: UploadFile) -> dict:
+        # _ = auth_user(request, config)
         voucherDB = VoucherDB(config)
         file_contents = file.file.read()
 
