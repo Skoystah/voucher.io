@@ -14,6 +14,8 @@ def main():
     db_url = os.getenv("DATABASE_URL")
     db_auth_token = os.getenv("DATABASE_AUTH_TOKEN")
     secret_key = os.getenv("SECRET_KEY")
+    cert = os.getenv("CERT")
+    key_cert = os.getenv("KEY_CERT")
 
     if secret_key is None:
         raise Exception("Secret key is missing")
@@ -36,8 +38,10 @@ def main():
             create_app(config),
             host="0.0.0.0",
             port=8000,
-            ssl_keyfile="localhost-key.pem",
-            ssl_certfile="localhost.pem",
+            # ssl_keyfile="localhost-key.pem",
+            # ssl_certfile="localhost.pem",
+            ssl_keyfile=key_cert,
+            ssl_certfile=cert,
         )
 
 
