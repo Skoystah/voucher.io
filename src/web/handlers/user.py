@@ -1,7 +1,8 @@
 from config import Config
 from user.models import UserDB
+from user.auth import validate_jwt_token
 from pydantic import BaseModel
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, HTTPException, Response, Request, status
 from user.auth import check_user_password, get_jwt_token
 
 
@@ -13,7 +14,6 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     name: str
     is_admin: bool
-    token: str
 
 
 def create_user_router(config: Config):
@@ -21,7 +21,6 @@ def create_user_router(config: Config):
 
     @router.post("/login")
     def login(login_user: UserLogin, response: Response) -> UserResponse:
-        print("LOGIN", login_user.name, login_user.password)
         userDB = UserDB(config)
 
         # TEMP FOR TESTING
@@ -40,6 +39,45 @@ def create_user_router(config: Config):
                 detail="Error generating token",
             )
 
-        return UserResponse(name=user.name, is_admin=user.is_admin, token=jwt_token)
+        response.set_cookie(
+            key="authToken",
+            value=jwt_token,
+            httponly=True,
+            secure=True,
+            samesite="none",
+        )
+        return UserResponse(name=user.name, is_admin=user.is_admin)
+
+    @router.post("/logout")
+    def logout(request: Request, response: Response):
+        token = request.cookies.get("authToken")
+
+        if not token:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Auth token missing",
+            )
+
+        try:
+            _ = validate_jwt_token(token, config.secret_key)
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Issue with JWT Token: {e}",
+            )
+        # Todo - add user process (invalidate stored token?)
+
+        response.delete_cookie(
+            key="authToken",
+            httponly=True,
+            secure=True,
+            samesite="none",
+        )
+
+    # @router.get("/users/me")
+    # async def read_users_me(
+    #     current_user: Annotated[User, Depends(get_current_active_user)],
+    # ):
+    #     return current_user
 
     return router

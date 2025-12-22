@@ -32,7 +32,13 @@ def main():
         config = Config(
             db=DB(db_url, db_auth_token, verbose=True), secret_key=secret_key
         )
-        uvicorn.run(create_app(config), host="0.0.0.0", port=8000)
+        uvicorn.run(
+            create_app(config),
+            host="0.0.0.0",
+            port=8000,
+            ssl_keyfile="localhost-key.pem",
+            ssl_certfile="localhost.pem",
+        )
 
 
 if __name__ == "__main__":

@@ -182,6 +182,7 @@ cython_debug/
 
 # Node stuff
 node_modules/
+server.sh
 
 #mac os stuff
 .DS_Store

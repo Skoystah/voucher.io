@@ -16,13 +16,14 @@ class VoucherCreate(BaseModel):
 
 
 def auth_user(request: Request, config: Config) -> str:
-    auth_header = request.headers.get("Authorization")
-    if not auth_header:
+    token = request.cookies.get("authToken")
+
+    if not token:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Authorization header missing",
+            detail="Auth token missing",
         )
-    token = auth_header.removeprefix("Bearer ")
+
     try:
         auth_user = validate_jwt_token(token, config.secret_key)
     except Exception as e:
@@ -44,11 +45,6 @@ def create_voucher_router(config: Config):
         duration: Duration | None = None,
     ) -> List[Voucher]:
         _ = auth_user(request, config)
-        # except Exception as e:
-        #     raise HTTPException(
-        #         status_code=status.HTTP_403_FORBIDDEN,
-        #         detail=f"Issue with JWT Token: {e}",
-        #     )
 
         used = None
         if not includeUsed:
@@ -80,10 +76,11 @@ def create_voucher_router(config: Config):
         return added_voucher
 
     @router.post("/vouchers/upload-file", status_code=HTTP_201_CREATED)
-    def add_vouchers_file(file: UploadFile) -> dict:
+    async def add_vouchers_file(file: UploadFile) -> dict:
         # _ = auth_user(request, config)
         voucherDB = VoucherDB(config)
-        file_contents = file.file.read()
+        print("add_vouchers_file", file)
+        file_contents = await file.read()
 
         if file.filename is None:
             raise HTTPException(

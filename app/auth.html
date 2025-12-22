@@ -8,13 +8,16 @@
     <title>Voucher.io - Login</title>
     <link href="css/style.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-    <script defer type="module" src="scripts/config.js"></script>
-    <script defer type="module" src="scripts/api/auth.js"></script>
+    <script defer type="module" src="src/config/config.js"></script>
+    <script defer type="module" src="src/app-auth.js"></script>
 </head>
 
 <body>
-    <h1>Login</h1>
-    <div class="user-login-container">
+    <section class="header-section">
+        <h1>Voucher.io</h1>
+        <h2>Login</h2>
+    </section>
+    <section class="user-login-container">
         <form id="user-login-form">
             <p>
                 <label for="username"> Username:</label>
@@ -28,7 +31,10 @@
                 <input type="submit" class="login-submit" value="Sign in" />
             </p>
         </form>
-    </div>
+    </section>
+    <section class="footer-section">
+        <div class="footer-text">Geert Dooms - 2025</div>
+    </section>
 </body>
 
 </html>

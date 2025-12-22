@@ -8,19 +8,23 @@
     <title>Voucher.io</title>
     <link href="css/style.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-    <script defer type="module" src="scripts/config.js"></script>
-    <script defer type="module" src="scripts/app.js"></script>
+    <script defer type="module" src="src/config/config.js"></script>
+    <script defer type="module" src="src/app-main.js"></script>
 </head>
 
 <body>
-    <h1>Leuven parking vouchers</h1>
-    <p id="introduction">This application will retrieve available parking vouchers
-        for the <span class="zone">LEU1</span> parking zone.</p>
+    <section class="header-section">
+        <h1>Voucher.io</h1>
+        <button type="button" class="logout">Log out</button>
+    </section>
+    <section class="container">
+        <p id="introduction">Retrieve parking vouchers
+            for the <span class="zone">LEU1</span> parking zone.</p>
 
-    <!-- Get vouchers -->
-    <div id="vouchers-search">
-        <form id="vouchers-search-form">
-            <p>
+        <!-- Get vouchers -->
+        <div id="vouchers-search">
+            <!-- <p></p> -->
+            <form id="vouchers-search-form">
                 <select class="filter-voucher" name="duration">
                     <option value="any" />Any</option>
                     <option value="1h" />1 hour</option>
@@ -29,46 +33,46 @@
                     <option value="12h" />12 hours</option>
                 </select>
                 <input class="filter-voucher" type="checkbox" name="include-used" value=true />Show used vouchers?
-            </p>
-        </form>
-    </div>
-    <!-- End of get vouchers form -->
+            </form>
+        </div>
+        <!-- End of get vouchers form -->
 
-    <!-- List of retrieved vouchers - dynamically populated -->
-    <div id="vouchers-data">
-    </div>
+        <!-- List of retrieved vouchers - dynamically populated -->
+        <div id="vouchers-data">
+        </div>
 
-    <hr />
+        <hr />
 
-    <div id="vouchers-add">
-        <h3>Add new vouchers:</h3>
-        <form id="vouchers-add-form">
-            <p>
-                <label> Code:
-                    <input name="input-code" />
-                </label>
-                <select class="voucher-property" name="input-duration">
-                    <option value="1h" />1 hour</option>
-                    <option value="2h" />2 hours</option>
-                    <option value="4h" />4 hours</option>
-                    <option value="12h" />12 hours</option>
-                </select>
-            </p>
-            <p>
-                <label for="avatar">Vouchers file (pdf or csv):
-                    <input type="file" name="input-file" accept="text/csv, application/pdf" />
-                </label>
-            </p>
-            <p>
-                <button type="button" class="add-voucher-submit">Add vouchers</button>
-            </p>
-        </form>
-        <p id="add-voucher-result"></p>
-    </div>
-
+        <div id="vouchers-add">
+            <h3>Add new vouchers:</h3>
+            <form id="vouchers-add-form">
+                <p>
+                    <label> Code:
+                        <input name="input-code" />
+                    </label>
+                    <select class="voucher-property" name="input-duration">
+                        <option value="1h" />1 hour</option>
+                        <option value="2h" />2 hours</option>
+                        <option value="4h" />4 hours</option>
+                        <option value="12h" />12 hours</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="avatar">Vouchers file (pdf or csv):
+                        <input type="file" name="input-file" accept="text/csv, application/pdf" />
+                    </label>
+                </p>
+                <p>
+                    <button type="button" class="add-voucher-submit">Add vouchers</button>
+                </p>
+            </form>
+            <p id="add-voucher-result"></p>
+        </div>
+    </section>
+    <section class="footer-section">
+        <div class="footer-text">Geert Dooms - 2025</div>
+    </section>
 
 </body>
-<footer>
-    <button type="button" class="logout">Log out</button>
 
 </html>

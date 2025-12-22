@@ -1,13 +1,6 @@
-import { API_URL } from "../config.js";
-import { getAuthToken } from "../dom/dom.js";
-
-function getAuthHeader() {
-    return ['Authorization', `Bearer ${getAuthToken()}`]
-}
+import { API_URL } from "../config/config.js";
 
 export async function getVouchers(input) {
-    const headers = new Headers();
-    headers.append(...getAuthHeader());
 
     let params = new URLSearchParams();
 
@@ -33,9 +26,8 @@ export async function getVouchers(input) {
         url,
         {
             method: "GET",
-            headers: headers,
+            credentials: "include",
         })
-
 
     const response = await fetch(request);
     if (!response.ok) {
@@ -47,7 +39,6 @@ export async function getVouchers(input) {
 
 export async function addVoucher(input) {
     const headers = new Headers();
-    headers.append(...getAuthHeader())
     headers.append('Content-Type', 'application/json');
 
     const inputCode = input.get("input-code");
@@ -58,6 +49,7 @@ export async function addVoucher(input) {
         url,
         {
             method: "POST",
+            credentials: "include",
             headers: headers,
             body: JSON.stringify({
                 code: inputCode,
@@ -76,15 +68,12 @@ export async function addVoucher(input) {
 
 export async function addVouchersFile(input) {
 
-    const headers = new Headers();
-    headers.append(...getAuthHeader())
-
     const url = API_URL.concat("/vouchers/upload-file");
     const request = new Request(
         url,
         {
             method: "POST",
-            headers: headers,
+            credentials: "include",
             body: input,
         }
     );
@@ -97,15 +86,13 @@ export async function addVouchersFile(input) {
 }
 
 export async function useVoucher(code) {
-    const headers = new Headers();
-    headers.append(...getAuthHeader())
 
     const url = API_URL.concat("/vouchers/", code)
     const request = new Request(
         url,
         {
             method: "PUT",
-            headers: headers,
+            credentials: "include",
         }
     );
 
@@ -116,15 +103,13 @@ export async function useVoucher(code) {
 }
 
 export async function deleteVoucher(code) {
-    const headers = new Headers();
-    headers.append(...getAuthHeader())
 
     const url = API_URL.concat("/vouchers/", code)
     const request = new Request(
         url,
         {
             method: "DELETE",
-            headers: headers,
+            credentials: "include",
         }
     );
 
