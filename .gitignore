@@ -1,3 +1,6 @@
+# Cert
+*.pem
+
 # Databases
 *.db
 embedded.*
