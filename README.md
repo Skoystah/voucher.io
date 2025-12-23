@@ -6,40 +6,37 @@ A web application to retrieve and manage available parking vouchers for Leuven.
 
 - Retrieve a list of parking vouchers usable for SMS parking in Leuven
 - Filter vouchers by duration and usage
-- Mark vouchers as used so they will no longer be retrieved 
-- Web interface for easy voucher lookup and management using a REST API
-- CLI interface for admin access
-- Add vouchers in bulk via a csv file (under development)
+- Mark vouchers as used and remove them once used
+- Mobile-friendly Web interface for easy voucher lookup and management using a REST API
+- CLI interface for admin features
+- Add vouchers in bulk via a pdf file (as received from the Leuven portal) or csv file
 
 ## Motivation / context
 
 I have created this application as a learning project to get in touch with various
-subjects in development. This explains some architectural decisions, that might seem 
+technologies. This explains some architectural decisions, that might seem 
 overkill for an application this small (e.g. Alembic database migrations, distributed Turso database, ...).
 My goal was to create a full end-to-end application, including continuous integration and deployment, 
 and some bells and whistles. 
 
-Subjects that I have learned about:
+A brief summary of the used stack and takeaways:
 
- - **Python** : Created a full OOP CRUD application.
- - **JavaScript** : Basic Javascript to provide interaction between frontend and my REST API
+ - **Python** : Created a full OOP CRUD application (REST API).
+ - **Javascript** : Basic Javascript to provide interaction between with the REST API
  - **ORM** : Integration of SQL Alchemy and Mapped classes to represent my data.
- - **HTML/CSS** : Creating a basic web page with basic layout to display and manage my data.
+ - **HTML/CSS** : Creating a basic web page with to display and manage my data.
  - **TDD** : Using TDD for a large part of my development in order to have good working Unit tests for the whole scope.
- - **CI/CD** : A basic workflow using GitHub Actions with automated unit tests (unittest), formatting (ruff) and deployment to Google Cloud
- - **Docker** : The application is deployed as a Docker image to Google Cloud. 
+ - **CI/CD** : A basic workflow using GitHub Actions with automated unit tests (unittest), Python formatting (ruff) and deployment to Google Cloud
+ - **Docker** : The application is deployed as a Docker image to Google Cloud automatically by GitHub actions
  - **Google Cloud** : Deploying the application on Google Cloud automatically from GitHub (push not pull)
  - **HTTP server** : Creating an HTTP server from scratch using the Python bare http.server library. 
  This is not useable in production but provides a more in depth learning experience. 
  - **FastAPI** : Implementation of FastAPI to replace HTTP Server (HTTP server still available in separate branch) and simplify the code. 
+ - **Security** : Authentication with JWTtoken and session httpsecure cookies. Basic secure user/password storage in backend database.
 
 What I still want to explore further:
 
 - **More HTML/CSS** : Further polish my frontend part to have a basic yet good looking and user friendly page.
-- **Security** : Add an authentication layer, so only selected users may manage vouchers. Optionally
-extend this system to a limited set of other users.
-- **Features** : Add more features to the application (e.g. add vouchers, remove vouchers, ...), which are now
-only accessible through the Command Line Interface.
 - **Python tools** : Explore other Python tools (e.g. PyTest, MyPy, FastAPI or Flask)
     - FastAPI has been implemented. 
 
@@ -61,7 +58,7 @@ only accessible through the Command Line Interface.
 
 **voucher.io** consists of:
 - A Python-based REST API backend for managing parking vouchers in Leuven.
-- A JavaScript-based web application frontend for searching and using vouchers.
+- A (Vanilla) JavaScript-based web application frontend for searching and using vouchers.
 
 ---
 
@@ -86,18 +83,27 @@ only accessible through the Command Line Interface.
    uv sync --locked --all-extras
    ```
 
-3. **Run the server:**
+3. **Run the backend server:**
 
    ```sh
-   cd src
-   uv run main.py
+   uv run src/main.py
    ```
 
-   _By default, the API is available at `http://localhost:8000`._
+   _By default, the API is available at `https://localhost:8000`._
+
+4. **Run the frontend server:**
+
+    ```sh
+
+    # Example using npx - starting secure HTTPS server locally
+    npx http-server -p 8080 -S -C localhost.pem -K localhost-key.pem
+
+    ```
+
 
 4. **Open the web app:**
 
-   Simply open `app/index.html` in your browser. It will connect to the backend API.
+   Simply open `https://localhost:8080/app` in your browser. It will connect to the backend API.
 
 ---
 ## Usage
@@ -196,7 +202,7 @@ The frontend is a simple JavaScript single-page app found in `/app`:
 
 ### Usage
 
-- Open `app/index.html` in your browser.
+- Open `https://localhost:8080/app` in your browser.
 - Use the form to search for vouchers (by duration, or include used).
 - Click "Use voucher" to mark a voucher as used.
 
@@ -206,12 +212,12 @@ The frontend interacts with the REST API using `fetch`, e.g.:
 
 ```javascript
 // Fetch vouchers
-fetch('http://localhost:8000/vouchers?duration=1h')
+fetch('https://localhost:8000/vouchers?duration=1h')
   .then(res => res.json())
   .then(data => presentVouchers(data));
 
 // Use a voucher
-fetch('http://localhost:8000/vouchers/LEU123', { method: 'PUT' });
+fetch('https://localhost:8000/vouchers/LEU123', { method: 'PUT' });
 ```
 
 ---
