@@ -109,7 +109,7 @@ function presentVouchers(data) {
     voucherTableRow.appendChild(durationHeader);
 
     const availableHeader = document.createElement("th");
-    availableHeader.textContent = "Available?";
+    availableHeader.textContent = "Available";
     voucherTableRow.appendChild(availableHeader);
 
     const actionHeader = document.createElement("th");
@@ -138,14 +138,14 @@ function presentVouchers(data) {
         if (!item.used) {
             const useButton = document.createElement("button");
             useButton.className = "use-button"
-            useButton.textContent = "Use voucher";
+            useButton.textContent = "Use";
             useButton.dataset.voucherCode = item.code;
             useButton.dataset.action = "use";
             actionData.appendChild(useButton);
         } else {
             const deleteButton = document.createElement("button");
             deleteButton.className = "delete-button"
-            deleteButton.textContent = "Remove voucher";
+            deleteButton.textContent = "Remove";
             deleteButton.dataset.voucherCode = item.code;
             deleteButton.dataset.action = "delete";
             actionData.appendChild(deleteButton);

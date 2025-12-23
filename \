@@ -1,0 +1,210 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+:root {
+    --sage-dark: #9E9F91;
+    --sage-light: #D7E0DD;
+    --sage-orange: #D99A71;
+    --sage-red: #D47058;
+    --sage-pink: #F7CAB7;
+    --bankstraat-pink: #E6C0B6;
+    --bankstraat-orange: #A66124;
+    --bankstraat-white: #FFFFFF;
+
+    font-size: 16px;
+}
+
+
+@media only screen and (max-width: 500px) {
+    body {
+        display: flex;
+        flex-direction: column;
+
+        font-family: Inter, "Open Sans", Roboto, sans-serif;
+        background-color: var(--sage-light);
+        color: darkslategray;
+    }
+
+    .header-section,
+    .footer-section {
+        display: flex;
+        background: var(--sage-red);
+        color: var(--sage-light);
+    }
+
+    .logout {
+        background: var(--sage-dark);
+        padding: 5px 10px;
+        margin: auto;
+        border-radius: 5px;
+        color: var(--sage-light);
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin: 0 auto;
+        width: 80%;
+    }
+
+    h1,
+    h2 {
+        margin: auto;
+        color: var(--sage-light);
+    }
+
+    h1,
+    p,
+    span {
+        padding: 10px 0;
+    }
+
+    span.zone {
+        color: var(--sage-red);
+        font-weight: bold;
+    }
+
+
+    #vouchers-search-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+    }
+
+    #vouchers-table {
+        border-collapse: collapse;
+        table-layout: auto;
+        border-top: 2px solid var(--sage-dark);
+        border-bottom: 2px solid var(--sage-dark);
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    #vouchers-table th {
+        /* text-transform: uppercase; */
+        background-color: var(--bankstraat-orange);
+        color: var(--sage-light);
+        text-align: left;
+        padding: 10px;
+    }
+
+    #vouchers-table td {
+        /* border: 1px solid #ddd; */
+        text-align: left;
+        padding: 10px;
+    }
+
+    #vouchers-table tr:hover {
+        background-color: var(--sage-light);
+    }
+
+    .footer-text {
+        margin: 0 auto;
+        font-size: 0.8rem;
+    }
+}
+
+@media only screen and (min-width: 500px) {
+
+    body {
+        display: flex;
+        flex-direction: column;
+
+        font-family: Inter, "Open Sans", Roboto, sans-serif;
+        background-color: var(--sage-light);
+        color: darkslategray;
+    }
+
+    .header-section,
+    .footer-section {
+        display: flex;
+        background: var(--sage-red);
+        color: var(--sage-light);
+    }
+
+    .logout {
+        background: var(--sage-dark);
+        padding: 5px 10px;
+        margin: auto;
+        border-radius: 5px;
+        color: var(--sage-light);
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin: 0 auto;
+        width: 800px;
+    }
+
+    h1,
+    h2 {
+        margin: auto;
+        color: var(--sage-light);
+    }
+
+    h1,
+    p,
+    span {
+        padding: 10px 0;
+    }
+
+    span.zone {
+        color: var(--sage-red);
+        font-weight: bold;
+    }
+
+
+    #vouchers-search-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    #vouchers-table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        border-top: 2px solid var(--sage-dark);
+        border-bottom: 2px solid var(--sage-dark);
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    #vouchers-table th {
+        /* text-transform: uppercase; */
+        background-color: var(--bankstraat-orange);
+        color: var(--sage-light);
+        text-align: left;
+        padding: 10px;
+    }
+
+    #vouchers-table td {
+        /* border: 1px solid #ddd; */
+        text-align: left;
+        padding: 10px;
+    }
+
+    #vouchers-table tr:hover {
+        background-color: var(--sage-light);
+    }
+
+    .footer-text {
+        margin: 0 auto;
+        font-size: 0.8rem;
+    }
+}

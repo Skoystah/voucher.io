@@ -1,33 +1,123 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+:root {
+    --sage-dark: #9E9F91;
+    --sage-light: #D7E0DD;
+    --sage-orange: #D99A71;
+    --sage-red: #D47058;
+    --sage-pink: #F7CAB7;
+    --bankstraat-pink: #E6C0B6;
+    --bankstraat-orange: #A66124;
+    --bankstraat-white: #FFFFFF;
+
+    font-size: 16px;
+}
+
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+
+    font-family: Inter, "Open Sans", Roboto, sans-serif;
+    background-color: var(--sage-light);
+    color: darkslategray;
+}
+
+.header-section,
+.footer-section {
+    display: flex;
+    background: var(--sage-red);
+    color: var(--sage-light);
+}
+
+.logout {
+    background: var(--sage-dark);
+    padding: 5px 10px;
+    color: var(--sage-light);
+}
+
+button {
+    background: var(--sage-dark);
+    padding: 5px 10px;
+    margin: auto;
+    border-radius: 5px;
+    color: var(--sage-light);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0 auto;
+    width: 800px;
+}
+
+@media only screen and (max-width: 500px) {
+    .container {
+        width: 98%;
+    }
+}
+
+h1,
+h2 {
+    margin: auto;
+    color: var(--sage-light);
+}
+
+h1,
+p,
+span {
+    padding: 10px 0;
 }
 
 span.zone {
-    color: red;
+    color: var(--sage-red);
     font-weight: bold;
 }
 
+
+#vouchers-search-form {
+    display: flex;
+    gap: 10px;
+}
+
+
 #vouchers-table {
-    border-style: double;
     border-collapse: collapse;
-    /* width: auto; */
     table-layout: auto;
-    border: 1px solid #ccc;
+    border-top: 2px solid var(--sage-dark);
+    border-bottom: 2px solid var(--sage-dark);
+    width: 100%;
+    margin: 0 auto;
 }
 
 #vouchers-table th {
-    text-transform: uppercase;
+    background-color: var(--sage-red);
+    color: var(--sage-light);
     text-align: left;
-    padding-right: 8px;
-    border-bottom: 2px double;
+    padding: 10px;
 }
 
 #vouchers-table td {
-    border: 1px solid #ddd;
-    padding-right: 8px;
     text-align: left;
+    padding: 10px;
 }
 
-#vouchers-table tr {
-    border-bottom: 1px dashed;
+@media only screen and (min-width: 500px) {
+    #vouchers-table tr:hover {
+        background-color: var(--sage-dark);
+    }
+}
+
+
+
+.footer-text {
+    margin: 0 auto;
+    font-size: 0.8rem;
 }
