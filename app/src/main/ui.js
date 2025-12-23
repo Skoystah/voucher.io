@@ -6,7 +6,7 @@ export async function addVoucherHandler() {
     const formInput = new FormData(form);
 
     const inputCode = formInput.get("input-code");
-    const inputFile = formInput.get("input-file");
+    const inputFile = formInput.get("file");
 
     if (inputFile.name) {
         if (inputCode) {

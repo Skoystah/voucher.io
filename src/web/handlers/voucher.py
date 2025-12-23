@@ -80,7 +80,7 @@ def create_voucher_router(config: Config):
         # _ = auth_user(request, config)
         voucherDB = VoucherDB(config)
         print("add_vouchers_file", file)
-        file_contents = await file.read()
+        file_contents = file.file.read()
 
         if file.filename is None:
             raise HTTPException(

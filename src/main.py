@@ -38,8 +38,6 @@ def main():
             create_app(config),
             host="0.0.0.0",
             port=8000,
-            # ssl_keyfile="localhost-key.pem",
-            # ssl_certfile="localhost.pem",
             ssl_keyfile=key_cert,
             ssl_certfile=cert,
         )
