@@ -34,6 +34,7 @@ export async function logoutHandler() {
     try {
         await logout();
     } catch (error) {
+        console.error(error);
         window.alert("Logout failed");
     }
     finally {
