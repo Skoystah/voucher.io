@@ -1,6 +1,6 @@
 from config import Config
 from user.models import UserDB
-from user.auth import hash_user_password, check_user_password
+from user.auth import hash_user_password
 from getpass import getpass
 
 
@@ -34,17 +34,17 @@ def handle_manage_user(config: Config, *args) -> None:
     print("Enter user name:")
     user_name = input()
 
-    user_password = ""
-    while not user_password:
-        user_password = getpass("Enter current password:")
+    # user_password = ""
+    # while not user_password:
+    #     user_password = getpass("Enter current password:")
 
     userDB = UserDB(config)
 
     user = userDB.get_user(user_name)
 
-    if not check_user_password(user_password, user.password):
-        print("Password does not match")
-        return
+    # if not check_user_password(user_password, user.password):
+    #     print("Password does not match")
+    #     return
 
     new_user_password = ""
     new_user_password_confirm = ""
