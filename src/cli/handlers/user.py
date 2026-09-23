@@ -1,7 +1,8 @@
-from config import Config
-from user.models import UserDB
-from user.auth import hash_user_password
 from getpass import getpass
+
+from config import Config
+from user.auth import hash_user_password
+from user.models import UserDB
 
 
 def handle_add_user(config: Config, *args) -> None:
@@ -19,7 +20,7 @@ def handle_add_user(config: Config, *args) -> None:
         print("Admin user? (y/n)")
         user_is_admin = input()
 
-    user_is_admin = True if user_is_admin == "y" else False
+    user_is_admin = user_is_admin == "y"
 
     userDB = UserDB(config)
 

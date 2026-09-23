@@ -1,9 +1,11 @@
-import cli.repl as repl
-import sys
 import os
+import sys
+
 import uvicorn
-from config import Config
 from dotenv import load_dotenv
+
+from cli import repl
+from config import Config
 from db.db import DB
 from web.app import create_app
 

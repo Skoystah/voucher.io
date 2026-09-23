@@ -1,7 +1,8 @@
+import os
 import unittest
+
 from config import Config
 from db.db import DB
-import os
 
 
 class BaseTestClass(unittest.TestCase):

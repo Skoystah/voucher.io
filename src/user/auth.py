@@ -1,4 +1,5 @@
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
+
 import bcrypt
 import jwt
 
@@ -16,7 +17,7 @@ def check_user_password(clear_password: str, hashed_password: str) -> bool:
 
 
 def get_jwt_token(user_name, secret_key, days_to_expire: int):
-    issued_at = datetime.now(timezone.utc)
+    issued_at = datetime.now(UTC)
     expires_at = issued_at + timedelta(days=days_to_expire)
 
     claims = {

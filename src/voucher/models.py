@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+
 from config import Config
 from db.models import Voucher
 
@@ -28,7 +28,7 @@ class VoucherDB:
 
     def get_vouchers(
         self, duration: str | None = None, used: bool | None = None
-    ) -> List[Voucher]:
+    ) -> list[Voucher]:
         return self.db.get_vouchers(duration=duration, used=used)
 
     def use_voucher(self, code: str) -> None:

@@ -1,11 +1,12 @@
 import json
 import unittest
 
-from web.app import create_app
 from base import BaseTestClass
-from voucher.models import VoucherDB
 from fastapi.testclient import TestClient
+
 from user.auth import get_jwt_token
+from voucher.models import VoucherDB
+from web.app import create_app
 
 
 class TestHTTP(BaseTestClass):

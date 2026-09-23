@@ -1,8 +1,9 @@
 import unittest
-from base import BaseTestClass
-from db.models import Voucher
 
+from base import BaseTestClass
 from sqlalchemy.orm import Session
+
+from db.models import Voucher
 
 
 class TestDB(BaseTestClass):

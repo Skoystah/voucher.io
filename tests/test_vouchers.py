@@ -1,7 +1,9 @@
 import unittest
+
 from base import BaseTestClass
-from voucher.models import VoucherDB
+
 from db.models import Voucher
+from voucher.models import VoucherDB
 
 
 class TestVouchers(BaseTestClass):

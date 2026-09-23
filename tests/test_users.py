@@ -1,7 +1,9 @@
 import unittest
+
 from base import BaseTestClass
-from user.models import UserDB
+
 from user.auth import hash_user_password
+from user.models import UserDB
 
 
 class Testusers(BaseTestClass):

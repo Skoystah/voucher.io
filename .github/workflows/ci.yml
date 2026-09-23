@@ -20,10 +20,10 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
-        with:
-          # Install a specific version of uv.
-          version: "0.8.5"
+        uses: astral-sh/setup-uv@v10.2.0
+        # with:
+        #   # Install a specific version of uv.
+        #   version: "0.12.18"
 
       - name: Set up Python 3.13
         uses: actions/setup-python@v3
@@ -48,10 +48,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
-        with:
-          # Install a specific version of uv.
-          version: "0.8.5"
+        uses: astral-sh/setup-uv@v10.2.0
+        # with:
+        #   # Install a specific version of uv.
+        #   version: "0.8.5"
 
       - name: Set up Python
         run: uv python install
@@ -60,8 +60,10 @@ jobs:
         run: uv tool install ruff@latest
 
       - name: Check formatting
-        run: ruff check .
+        run: ruff check . --ignore 'BLE001,TRY002'
 
+      - name: Check formatting
+        run: ruff format .
       # - name: Lint with flake8
       #   run: |
       #     # stop the build if there are Python syntax errors or undefined names

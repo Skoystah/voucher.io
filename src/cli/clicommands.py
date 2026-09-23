@@ -1,15 +1,16 @@
-from typing import Callable
+from collections.abc import Callable
+
 from cli.handlers.exit import handle_exit
 from cli.handlers.help import handle_help
-from cli.handlers.voucher import (
-    handle_list_vouchers,
-    handle_use_voucher,
-    handle_add_voucher,
-    handle_add_vouchers_file,
-)
 from cli.handlers.user import (
     handle_add_user,
     handle_manage_user,
+)
+from cli.handlers.voucher import (
+    handle_add_voucher,
+    handle_add_vouchers_file,
+    handle_list_vouchers,
+    handle_use_voucher,
 )
 
 

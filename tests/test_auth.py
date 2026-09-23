@@ -1,10 +1,12 @@
 import unittest
+
 from base import BaseTestClass
+
 from tests.test_data import TEST_USERS
 from user.auth import (
-    hash_user_password,
     check_user_password,
     get_jwt_token,
+    hash_user_password,
     validate_jwt_token,
 )
 

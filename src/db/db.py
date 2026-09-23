@@ -1,8 +1,9 @@
-from typing import List
+
 from sqlalchemy import create_engine, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from db.models import Base, Voucher, User
+
+from db.models import Base, User, Voucher
 
 
 class DB:
@@ -53,7 +54,7 @@ class DB:
 
     def get_vouchers(
         self, duration: str | None = None, used: bool | None = None
-    ) -> List[Voucher]:
+    ) -> list[Voucher]:
         filters = {}
         if duration:
             filters["duration"] = duration

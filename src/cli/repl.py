@@ -1,8 +1,8 @@
-import cli.clicommands as clicommands
+from cli import clicommands
 from config import Config
 
-def start(config: Config) -> None:
 
+def start(config: Config) -> None:
     commands = clicommands.get_commands()
 
     print("Choose action:")
@@ -16,11 +16,10 @@ def start(config: Config) -> None:
         args = []
         if len(ipt) > 1:
             args = ipt[1:]
-        
+
         if command in commands:
             handler = commands[command].handler_function
             handler(config, *args)
         else:
             print("command unknown")
         continue
-

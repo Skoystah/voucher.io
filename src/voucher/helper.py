@@ -1,7 +1,8 @@
-from io import BytesIO, StringIO
+import csv
 import os
 import re
-import csv
+from io import BytesIO, StringIO
+
 from pypdf import PdfReader
 
 

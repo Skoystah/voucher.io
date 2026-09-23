@@ -1,8 +1,10 @@
 import unittest
+
 from base import BaseTestClass
-from tests.test_data import TEST_USERS
-from db.models import User
 from sqlalchemy.orm import Session
+
+from db.models import User
+from tests.test_data import TEST_USERS
 from user.auth import hash_user_password
 
 

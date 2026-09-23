@@ -1,17 +1,19 @@
+import io
+import os
 import unittest
 from unittest.mock import patch
-import os
-import io
+
+from base import BaseTestClass
+
 from cli.handlers.help import handle_help
 from cli.handlers.voucher import (
-    handle_list_vouchers,
-    handle_use_voucher,
     handle_add_voucher,
     handle_add_vouchers_file,
+    handle_list_vouchers,
+    handle_use_voucher,
 )
-from base import BaseTestClass
-from voucher.models import VoucherDB
 from db.models import Voucher
+from voucher.models import VoucherDB
 
 
 class TestCLI(BaseTestClass):
@@ -53,8 +55,7 @@ class TestCLI(BaseTestClass):
         ]
 
         with open("test_handle_add_voucher_bulk.csv", "w") as file:
-            for voucher in vouchers:
-                file.write(f"{voucher[0]};{voucher[1]}\n")
+            file.writelines(f"{voucher[0]};{voucher[1]}\n" for voucher in vouchers)
 
         with patch("cli.handlers.voucher.input") as mock_input:
             mock_input.side_effect = ["test_handle_add_voucher_bulk.csv"]

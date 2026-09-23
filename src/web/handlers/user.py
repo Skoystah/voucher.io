@@ -1,9 +1,9 @@
-from config import Config
-from user.models import UserDB
-from user.auth import validate_jwt_token
+from fastapi import APIRouter, HTTPException, Request, Response, status
 from pydantic import BaseModel
-from fastapi import APIRouter, HTTPException, Response, Request, status
-from user.auth import check_user_password, get_jwt_token
+
+from config import Config
+from user.auth import check_user_password, get_jwt_token, validate_jwt_token
+from user.models import UserDB
 
 
 class UserLogin(BaseModel):

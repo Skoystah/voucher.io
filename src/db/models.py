@@ -1,12 +1,12 @@
+from sqlalchemy import Boolean, CheckConstraint, String
 from sqlalchemy.orm import (
     DeclarativeBase,
+    Mapped,
     MappedAsDataclass,
     mapped_column,
-    Mapped,
 )
 from sqlalchemy.sql.functions import now
 from sqlalchemy.types import DateTime
-from sqlalchemy import Boolean, CheckConstraint, String
 
 
 class Base(MappedAsDataclass, DeclarativeBase):

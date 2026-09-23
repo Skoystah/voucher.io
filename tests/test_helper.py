@@ -1,5 +1,6 @@
-import unittest
 import os
+import unittest
+
 from voucher.helper import parse_vouchers_file
 
 
@@ -17,8 +18,7 @@ class TestHelper(unittest.TestCase):
         ]
 
         with open("test_handle_add_voucher_bulk.csv", "w") as file:
-            for voucher in vouchers:
-                file.write(f"{voucher[0]};{voucher[1]}\n")
+            file.writelines(f"{voucher[0]};{voucher[1]}\n" for voucher in vouchers)
 
         self.assertEqual(
             parse_vouchers_file("test_handle_add_voucher_bulk.csv"), vouchers

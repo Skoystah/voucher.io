@@ -1,12 +1,13 @@
-from typing import List
+
+from fastapi import APIRouter, HTTPException, Request, UploadFile, status
 from pydantic import BaseModel
-from user.auth import validate_jwt_token
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
+
 from config import Config
 from db.models import Voucher
+from user.auth import validate_jwt_token
 from voucher.helper import parse_vouchers_file
 from voucher.models import Duration, VoucherDB
-from fastapi import APIRouter, HTTPException, Request, UploadFile, status
 
 
 class VoucherCreate(BaseModel):
@@ -43,7 +44,7 @@ def create_voucher_router(config: Config):
         request: Request,
         includeUsed: bool | None = False,
         duration: Duration | None = None,
-    ) -> List[Voucher]:
+    ) -> list[Voucher]:
         _ = auth_user(request, config)
 
         used = None

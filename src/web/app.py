@@ -1,8 +1,9 @@
-from config import Config
-from web.handlers.voucher import create_voucher_router
-from web.handlers.user import create_user_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from config import Config
+from web.handlers.user import create_user_router
+from web.handlers.voucher import create_voucher_router
 
 
 def create_app(config: Config) -> FastAPI:
