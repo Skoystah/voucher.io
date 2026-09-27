@@ -1,0 +1,10 @@
+services:
+  backend:
+    build: .
+    ports:
+      - 8000:8000
+      - 443:443
+  frontend:
+    build: ./app
+    ports:
+      - 8080:80
