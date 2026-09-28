@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, HTTPException, Request, UploadFile, status
 from pydantic import BaseModel
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
@@ -17,6 +16,9 @@ class VoucherCreate(BaseModel):
 
 
 def auth_user(request: Request, config: Config) -> str:
+    if config.auth_disabled:
+        return "local_user"
+
     token = request.cookies.get("authToken")
 
     if not token:
