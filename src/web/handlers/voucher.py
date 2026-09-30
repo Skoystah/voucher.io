@@ -16,8 +16,6 @@ class VoucherCreate(BaseModel):
 
 
 def auth_user(request: Request, config: Config) -> str:
-    if config.auth_disabled:
-        return "local_user"
 
     token = request.cookies.get("authToken")
 
@@ -47,7 +45,8 @@ def create_voucher_router(config: Config):
         includeUsed: bool | None = False,
         duration: Duration | None = None,
     ) -> list[Voucher]:
-        _ = auth_user(request, config)
+        if config.auth:
+            _ = auth_user(request, config)
 
         used = None
         if not includeUsed:
@@ -63,7 +62,8 @@ def create_voucher_router(config: Config):
 
     @router.post("/vouchers", status_code=HTTP_201_CREATED)
     def add_voucher(request: Request, voucher_create: VoucherCreate) -> Voucher:
-        _ = auth_user(request, config)
+        if config.auth:
+            _ = auth_user(request, config)
 
         voucherDB = VoucherDB(config)
         try:
@@ -117,7 +117,8 @@ def create_voucher_router(config: Config):
 
     @router.put("/vouchers/{voucher_code}")
     def use_voucher(request: Request, voucher_code: str) -> None:
-        _ = auth_user(request, config)
+        if config.auth:
+            _ = auth_user(request, config)
         voucherDB = VoucherDB(config)
         try:
             voucherDB.use_voucher(voucher_code)
@@ -129,7 +130,8 @@ def create_voucher_router(config: Config):
 
     @router.delete("/vouchers/{voucher_code}", status_code=HTTP_204_NO_CONTENT)
     def delete_voucher(request: Request, voucher_code: str) -> None:
-        _ = auth_user(request, config)
+        if config.auth:
+            _ = auth_user(request, config)
         voucherDB = VoucherDB(config)
         try:
             voucherDB.delete_voucher(voucher_code)

@@ -19,7 +19,7 @@ def main():
     cert = os.getenv("CERT")
     key_cert = os.getenv("KEY_CERT")
     disable_auth = os.getenv("DISABLE_AUTH", "false").lower() == "true"
-    
+
     if secret_key is None:
         raise Exception("Secret key is missing")
 
@@ -35,7 +35,9 @@ def main():
         repl.start(config)
     else:
         config = Config(
-            db=DB(db_url, db_auth_token, verbose=True), secret_key=secret_key, auth_disabled=disable_auth
+            db=DB(db_url, db_auth_token, verbose=True),
+            secret_key=secret_key,
+            auth_disabled=disable_auth,
         )
         uvicorn.run(
             create_app(config),
