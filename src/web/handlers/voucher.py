@@ -46,7 +46,10 @@ def create_voucher_router(config: Config):
         duration: Duration | None = None,
     ) -> list[Voucher]:
         if config.auth:
+            print("get vouchers - auth req!")
             _ = auth_user(request, config)
+        else:
+            print("get vouchers - NO auth req!")
 
         used = None
         if not includeUsed:

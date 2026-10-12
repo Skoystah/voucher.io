@@ -19,12 +19,20 @@ def main():
     cert = os.getenv("CERT")
     key_cert = os.getenv("KEY_CERT")
     disable_auth = os.getenv("DISABLE_AUTH", "false").lower() == "true"
+    environment = os.getenv("ENVIRONMENT", "cloud").lower()
+
+    print ("Disable auth :", disable_auth)
+    print ("Environment :", environment)
 
     if secret_key is None:
         raise Exception("Secret key is missing")
 
     if db_url is None:
         raise Exception("DB Url is missing")
+
+    
+    use_ssl = environment != "local"
+    print("Use ssl ", use_ssl)
 
     args = sys.argv
 
@@ -33,7 +41,7 @@ def main():
             db=DB(db_url, db_auth_token, verbose=False), secret_key=secret_key
         )
         repl.start(config)
-    else:
+    elif use_ssl:
         config = Config(
             db=DB(db_url, db_auth_token, verbose=True),
             secret_key=secret_key,
@@ -45,6 +53,17 @@ def main():
             port=8000,
             ssl_keyfile=key_cert,
             ssl_certfile=cert,
+        )
+    else:
+        config = Config(
+            db=DB(db_url, db_auth_token, verbose=True),
+            secret_key=secret_key,
+            auth_disabled=disable_auth,
+        )
+        uvicorn.run(
+            create_app(config),
+            host="0.0.0.0",
+            port=8000,
         )
 
 

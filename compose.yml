@@ -3,8 +3,13 @@ services:
     build: .
     ports:
       - 8000:8000
-      - 443:443
+    environment:
+      - ENVIRONMENT=local
+    # env_file: 
+    #   - ./.env
   frontend:
     build: ./app
     ports:
-      - 8080:80
+      - 8001:80
+    depends_on:
+      - backend
