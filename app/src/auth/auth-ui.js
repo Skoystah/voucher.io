@@ -6,28 +6,28 @@ export async function loginHandler(e) {
     const form = document.querySelector("#user-login-form");
     const formInput = new FormData(form);
 
-    const inputUserName = formInput.get("username");
-    const inputPassword = formInput.get("password");
+    const inputUserName = String(formInput.get("username") ?? "").trim();
+    const inputPassword = String(formInput.get("password") ?? "");
 
     if (!inputUserName) {
         window.alert("User name required");
-        return
+        return;
     }
     if (!inputPassword) {
         window.alert("Password required");
-        return
+        return;
     }
 
     try {
         const data = await login(formInput);
-        localStorage.setItem("isAdmin", data.is_admin);
-        window.location.href = "index.html"
+        localStorage.setItem("isAdmin", String(Boolean(data?.is_admin)));
+        window.location.href = "index.html";
     } catch (error) {
         window.alert("Login failed");
     } finally {
         form.reset();
     }
-};
+}
 
 export async function logoutHandler() {
     localStorage.removeItem("isAdmin");
@@ -36,8 +36,7 @@ export async function logoutHandler() {
     } catch (error) {
         console.error(error);
         window.alert("Logout failed");
-    }
-    finally {
+    } finally {
         window.location.reload();
     }
 }

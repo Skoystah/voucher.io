@@ -1,120 +1,105 @@
 import { API_URL } from "../config/config.js";
 
-export async function getVouchers(input) {
+function toErrorMessage(response, fallback) {
+    return response.text()
+        .then((text) => {
+            try {
+                const payload = JSON.parse(text);
+                return payload?.detail || payload?.message || text || fallback;
+            } catch {
+                return text || fallback;
+            }
+        })
+        .catch(() => fallback);
+}
 
-    let params = new URLSearchParams();
+export async function getVouchers(input) {
+    const params = new URLSearchParams();
 
     const duration = input.get("duration");
     if (duration && duration.toLowerCase() !== "any") {
-        params.set("duration", duration)
+        params.set("duration", duration);
     }
 
-    const includeUsed = input.get("include-used");
-    if (includeUsed) {
-        params.set("includeUsed", includeUsed);
-    } else {
-        params.set("includeUsed", "false")
+    const includeUsed = input.get("include-used") === "true" || input.get("include-used") === true;
+    params.set("includeUsed", String(includeUsed));
+
+    const url = new URL(`${API_URL}/vouchers`);
+    for (const [key, value] of params.entries()) {
+        url.searchParams.set(key, value);
     }
 
-    const query = params.toString();
-    let url = API_URL.concat("/vouchers")
-    if (query) {
-        url = url.concat("?", query);
-    }
+    const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+    });
 
-    const request = new Request(
-        url,
-        {
-            method: "GET",
-            credentials: "include",
-        })
-
-    const response = await fetch(request);
     if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
+        throw new Error(await toErrorMessage(response, `Request failed: ${response.status}`));
     }
-    const data = await response.json();
-    return data;
+
+    return await response.json();
 }
 
 export async function addVoucher(input) {
-    const headers = new Headers();
-    headers.append('Content-Type', 'application/json');
+    const inputCode = String(input.get("input-code") ?? "").trim();
+    const inputDuration = String(input.get("input-duration") ?? "").trim();
 
-    const inputCode = input.get("input-code");
-    const inputDuration = input.get("input-duration");
+    if (!inputCode || !inputDuration) {
+        throw new Error("Code and duration are required");
+    }
 
-    const url = API_URL.concat("/vouchers");
-    const request = new Request(
-        url,
-        {
-            method: "POST",
-            credentials: "include",
-            headers: headers,
-            body: JSON.stringify({
-                code: inputCode,
-                duration: inputDuration,
-            }),
-        }
-    );
+    const response = await fetch(`${API_URL}/vouchers`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            code: inputCode,
+            duration: inputDuration,
+        }),
+    });
 
+    if (!response.ok) {
+        throw new Error(await toErrorMessage(response, `Request failed: ${response.status}`));
+    }
 
-    const response = await fetch(request);
-    // if (!response.ok) {
-    //     const content = await response.json();
-    //     throw new Error(content.detail);
-    // }
+    return await response.json().catch(() => ({}));
 }
 
-export async function addVouchersFile(input) {
+export async function addVouchersFile(formData) {
+    const response = await fetch(`${API_URL}/vouchers/upload-file`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+    });
 
-    const url = API_URL.concat("/vouchers/upload-file");
-    const request = new Request(
-        url,
-        {
-            method: "POST",
-            credentials: "include",
-            body: input,
-        }
-    );
-
-    const response = await fetch(request);
     if (!response.ok) {
-        const content = await response.json();
-        throw new Error(content.detail);
+        throw new Error(await toErrorMessage(response, `Request failed: ${response.status}`));
     }
+
+    return await response.json().catch(() => ({}));
 }
 
 export async function useVoucher(code) {
+    const safeCode = encodeURIComponent(String(code));
+    const response = await fetch(`${API_URL}/vouchers/${safeCode}`, {
+        method: "PUT",
+        credentials: "include",
+    });
 
-    const url = API_URL.concat("/vouchers/", code)
-    const request = new Request(
-        url,
-        {
-            method: "PUT",
-            credentials: "include",
-        }
-    );
-
-    const response = await fetch(request);
     if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
+        throw new Error(await toErrorMessage(response, `Request failed: ${response.status}`));
     }
 }
 
 export async function deleteVoucher(code) {
+    const safeCode = encodeURIComponent(String(code));
+    const response = await fetch(`${API_URL}/vouchers/${safeCode}`, {
+        method: "DELETE",
+        credentials: "include",
+    });
 
-    const url = API_URL.concat("/vouchers/", code)
-    const request = new Request(
-        url,
-        {
-            method: "DELETE",
-            credentials: "include",
-        }
-    );
-
-    const response = await fetch(request);
     if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
+        throw new Error(await toErrorMessage(response, `Request failed: ${response.status}`));
     }
 }
