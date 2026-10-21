@@ -2,15 +2,15 @@ from config import Config
 
 
 def handle_help(config: Config, *args) -> None:
-    # TO-DO - do this flexibly based on the commands - pass to *args?
-    print(
-        """Available commands:
-    add         add a new voucher
-    list        show available vouchers
-    help        show help
-    exit        exit program
-    add-file    add vouchers from a file
-    add-user    add user
-    manage-user manage user (password)
-"""
-    )
+    # Imported here rather than at module level because clicommands imports
+    # this handler, so a top-level import would be circular.
+    from cli import clicommands
+
+    commands = clicommands.get_commands()
+
+    width = max(len(command.name) for command in commands.values())
+
+    print("Available commands:")
+    for command in commands.values():
+        print(f"    {command.name.ljust(width)}  {command.description}")
+    print()
