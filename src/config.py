@@ -10,4 +10,3 @@ class Config:
             self.auth = False
         else:
             self.auth = True
-
