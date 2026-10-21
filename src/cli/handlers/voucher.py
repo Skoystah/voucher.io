@@ -1,5 +1,6 @@
 import os
 
+from cli.errors import error_message
 from config import Config
 from voucher.helper import parse_vouchers_file
 from voucher.models import VoucherDB
@@ -22,8 +23,10 @@ def handle_list_vouchers(config: Config, *args) -> None:
 
 def handle_add_voucher(config: Config, *args) -> None:
     print("Add voucher code:")
-    code = input()
-    # TO-DO - input validation on code
+    code = input().strip()
+    if not code:
+        print("Error - voucher code required")
+        return
 
     print(
         """select duration (enter for default 1h):\n
@@ -52,8 +55,8 @@ def handle_add_voucher(config: Config, *args) -> None:
     try:
         new_voucher = voucherDB.add_voucher(code, duration)
         print(f"Added voucher {new_voucher}")
-    except Exception as e:
-        print(f"Error - {e}")
+    except KeyError as e:
+        print(f"Error - {error_message(e)}")
 
 
 def handle_add_vouchers_file(config: Config, *args) -> None:
@@ -61,20 +64,25 @@ def handle_add_vouchers_file(config: Config, *args) -> None:
     file_name = input()
 
     if not os.path.exists(file_name):
-        print("File name required")
+        print(f"File not found: {file_name}")
+        return
+
+    voucherDB = VoucherDB(config)
+
+    try:
+        vouchers_input = parse_vouchers_file(file_name)
+    except ValueError as e:
+        print(f"Error - {error_message(e)}")
         return
 
     added_count = 0
-    voucherDB = VoucherDB(config)
-    vouchers_input = parse_vouchers_file(file_name)
-
     for code, duration in vouchers_input:
         try:
             new_voucher = voucherDB.add_voucher(code, duration)
             added_count += 1
             print(f"Added voucher {new_voucher}")
-        except Exception as e:
-            print(f"Error adding voucher {code}: {e}")
+        except KeyError as e:
+            print(f"Error adding voucher {code}: {error_message(e)}")
 
     print(f"Successfully added {added_count} vouchers")
 
@@ -88,20 +96,8 @@ def handle_use_voucher(config: Config, *args) -> None:
     voucherDB = VoucherDB(config)
 
     try:
-        voucherDB.use_voucher(code.upper())
-    except Exception as e:
-        print(f"Error - {e}")
-
-
-def convert_duration_text(text: str) -> str:
-    match text:
-        case "1 uur":
-            return "1h"
-        case "2 uur":
-            return "2h"
-        case "4 uur":
-            return "4h"
-        case "12 uur":
-            return "12h"
-        case _:
-            raise ValueError(f"Duration {text} does not exists")
+        used_voucher = voucherDB.use_voucher(code.upper())
+        print(f"Used voucher {used_voucher}")
+    except (ValueError, KeyError) as e:
+        # ValueError: already used. KeyError: never existed.
+        print(f"Error - {error_message(e)}")

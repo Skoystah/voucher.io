@@ -31,8 +31,8 @@ class VoucherDB:
     ) -> list[Voucher]:
         return self.db.get_vouchers(duration=duration, used=used)
 
-    def use_voucher(self, code: str) -> None:
-        self.db.use_voucher(code.upper())
+    def use_voucher(self, code: str) -> Voucher:
+        return self.db.use_voucher(code.upper())
 
     def delete_voucher(self, code: str) -> None:
         self.db.delete_voucher(code.upper())
