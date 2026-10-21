@@ -41,19 +41,33 @@ def parse_vouchers_pdf(file_name: str, file_contents=None) -> list[tuple[str, st
     else:
         reader = PdfReader(file_name)
 
-    text = reader.pages[2].extract_text()
+    # Codes and the "N uur" duration can land on different pages (the duration
+    # sits in the header above the address block), so scan the whole document
+    # for both rather than assuming a fixed page or an adjacent line.
+    voucher_codes: list[str] = []
+    duration_text: str | None = None
 
-    voucher_codes = re.findall(r"LEU[A-Z_0-9]{2,}", text)
-    voucher_duration_text = re.search(r"[0-9]+\suur", text)
-    if voucher_duration_text is None:
-        raise Exception("Duration could not be read from file")
+    for page in reader.pages:
+        text = page.extract_text()
+        if text is None:
+            continue
 
-    vouchers_input = [
-        (code, convert_duration_text(voucher_duration_text.group()))
-        for code in voucher_codes
+        if duration_text is None:
+            match = re.search(r"([0-9]+)\suur", text)
+            if match is not None:
+                duration_text = match.group(1)
+
+        voucher_codes.extend(re.findall(r"LEU[A-Z_0-9]{2,}", text))
+
+    if not voucher_codes:
+        raise ValueError("No voucher codes could be read from file")
+
+    if duration_text is None:
+        raise ValueError("Duration could not be read from file")
+
+    return [
+        (code, convert_duration_text(f"{duration_text} uur")) for code in voucher_codes
     ]
-
-    return vouchers_input
 
 
 def convert_duration_text(text: str) -> str:
