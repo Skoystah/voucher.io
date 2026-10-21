@@ -1,25 +1,19 @@
-import unittest
-
 from cli import clicommands
 
 
-class TestCommands(unittest.TestCase):
-    def test_get_commands(self):
-        commands = clicommands.get_commands()
+def test_get_commands():
+    commands = clicommands.get_commands()
 
-        self.assertIsInstance(commands, dict)
-
-    def test_check_commands(self):
-        commands = clicommands.get_commands()
-
-        self.assertIn("help", commands)
-        self.assertIn("exit", commands)
-        self.assertIn("add", commands)
-        self.assertIn("add-file", commands)
-        self.assertIn("list", commands)
-        self.assertIn("use", commands)
-        self.assertIn("add-user", commands)
+    assert isinstance(commands, dict)
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_check_commands():
+    commands = clicommands.get_commands()
+
+    assert "help" in commands
+    assert "exit" in commands
+    assert "add" in commands
+    assert "add-file" in commands
+    assert "list" in commands
+    assert "use" in commands
+    assert "add-user" in commands

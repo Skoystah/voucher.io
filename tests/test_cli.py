@@ -1,9 +1,5 @@
 import io
-import os
-import unittest
 from unittest.mock import patch
-
-from base import BaseTestClass
 
 from cli.handlers.help import handle_help
 from cli.handlers.voucher import (
@@ -16,132 +12,129 @@ from db.models import Voucher
 from voucher.models import VoucherDB
 
 
-class TestCLI(BaseTestClass):
-    def test_handle_help(self):
-        with patch("sys.stdout", new=io.StringIO()) as dummy_stdout:
-            handle_help(self.config)
+def test_handle_help(config):
+    with patch("sys.stdout", new=io.StringIO()) as dummy_stdout:
+        handle_help(config)
 
-            output = dummy_stdout.getvalue().strip()
-            # todo take from cli commands?
-            self.assertIn("help", output)
-            self.assertIn("exit", output)
-            self.assertIn("list", output)
-            self.assertIn("add", output)
-            self.assertIn("add-file", output)
-            self.assertIn("add-user", output)
-
-    def test_handle_add_voucher(self):
-        vouch = Voucher("LEU123", "1h")
-
-        with patch("cli.handlers.voucher.input") as mock_input:
-            mock_input.side_effect = [vouch.code, "a"]
-            handle_add_voucher(self.config)
-
-        voucherDB = VoucherDB(self.config)
-
-        expected_vouch = Voucher("LEU123", "1h")
-        self.assertEqual(voucherDB.get_voucher(expected_vouch.code), expected_vouch)
-
-    def test_handle_add_vouchers_file_csv(self):
-        vouchers = [
-            ("LEU121", "1h"),
-            ("LEU122", "2h"),
-            ("LEU123", "12h"),
-            ("LEU124", "4h"),
-            ("LEU125", "1h"),
-            ("LEU126", "4h"),
-            ("LEU127", "2h"),
-            ("LEU128", "1h"),
-        ]
-
-        with open("test_handle_add_voucher_bulk.csv", "w") as file:
-            file.writelines(f"{voucher[0]};{voucher[1]}\n" for voucher in vouchers)
-
-        with patch("cli.handlers.voucher.input") as mock_input:
-            mock_input.side_effect = ["test_handle_add_voucher_bulk.csv"]
-            handle_add_vouchers_file(self.config)
-
-        voucherDB = VoucherDB(self.config)
-        expected_vouchers = []
-        for code, duration in vouchers:
-            expected_vouchers.append(Voucher(code, duration))
-
-        self.assertEqual(voucherDB.get_vouchers(), expected_vouchers)
-
-        os.remove("test_handle_add_voucher_bulk.csv")
-
-    # Todo add unhappy testcases
-
-    def test_handle_add_vouchers_file_pdf(self):
-        voucher_codes = [
-            "LEU2CRPG36K",
-            "LEU2CRPGPS3",
-            "LEU2CRPGWAH",
-            "LEU2CRPGGE9",
-            "LEU2CRPGXKW",
-            "LEU2CRPGLFU",
-            "LEU2CRPG2F2",
-            "LEU2CRPGHSL",
-            "LEU2CRPGUR5",
-            "LEU2CRPGVD3",
-        ]
-        duration = "2h"
-
-        with patch("cli.handlers.voucher.input") as mock_input:
-            mock_input.side_effect = ["tests/data/test_vouchers.pdf"]
-            handle_add_vouchers_file(self.config)
-
-        voucherDB = VoucherDB(self.config)
-        expected_vouchers = []
-        for code in voucher_codes:
-            expected_vouchers.append(Voucher(code, duration))
-
-        self.assertEqual(voucherDB.get_vouchers(), expected_vouchers)
-
-    def test_handle_list_voucher(self):
-        voucher_codes = [
-            "LEU123",
-            "LEU456",
-        ]
-        voucher_durations = [
-            "1h",
-            "2h",
-        ]
-
-        voucherDB = VoucherDB(self.config)
-
-        for code, duration in zip(voucher_codes, voucher_durations):
-            voucherDB.add_voucher(code, duration)
-
-        expected_vouch = Voucher("LEU123", "1h")
-        expected_vouch2 = Voucher("LEU456", "2h")
-
-        with patch("sys.stdout", new=io.StringIO()) as dummy_stdout:
-            handle_list_vouchers(self.config)
-
-            output = dummy_stdout.getvalue().strip()
-            self.assertIn(expected_vouch.code, output)
-            self.assertIn(expected_vouch2.code, output)
-
-    def test_handle_use_voucher(self):
-        voucher_codes = [
-            "LEU123",
-            "LEU456",
-        ]
-        voucher_durations = [
-            "1h",
-            "2h",
-        ]
-
-        voucherDB = VoucherDB(self.config)
-
-        for code, duration in zip(voucher_codes, voucher_durations):
-            voucherDB.add_voucher(code, duration)
-
-        handle_use_voucher(self.config, "LEU123")
-
-        self.assertEqual(voucherDB.get_voucher("LEU123").used, True)
+        output = dummy_stdout.getvalue().strip()
+        # todo take from cli commands?
+        assert "help" in output
+        assert "exit" in output
+        assert "list" in output
+        assert "add" in output
+        assert "add-file" in output
+        assert "add-user" in output
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_handle_add_voucher(config):
+    vouch = Voucher("LEU123", "1h")
+
+    with patch("cli.handlers.voucher.input") as mock_input:
+        mock_input.side_effect = [vouch.code, "a"]
+        handle_add_voucher(config)
+
+    voucherDB = VoucherDB(config)
+
+    expected_vouch = Voucher("LEU123", "1h")
+    assert voucherDB.get_voucher(expected_vouch.code) == expected_vouch
+
+
+def test_handle_add_vouchers_file_csv(config, tmp_path):
+    vouchers = [
+        ("LEU121", "1h"),
+        ("LEU122", "2h"),
+        ("LEU123", "12h"),
+        ("LEU124", "4h"),
+        ("LEU125", "1h"),
+        ("LEU126", "4h"),
+        ("LEU127", "2h"),
+        ("LEU128", "1h"),
+    ]
+
+    csv_file = tmp_path / "test_handle_add_voucher_bulk.csv"
+    csv_file.write_text("".join(f"{code};{duration}\n" for code, duration in vouchers))
+
+    with patch("cli.handlers.voucher.input") as mock_input:
+        mock_input.side_effect = [str(csv_file)]
+        handle_add_vouchers_file(config)
+
+    voucherDB = VoucherDB(config)
+    expected_vouchers = [Voucher(code, duration) for code, duration in vouchers]
+
+    assert voucherDB.get_vouchers() == expected_vouchers
+
+
+# Todo add unhappy testcases
+
+
+def test_handle_add_vouchers_file_pdf(config):
+    voucher_codes = [
+        "LEU2CRPG36K",
+        "LEU2CRPGPS3",
+        "LEU2CRPGWAH",
+        "LEU2CRPGGE9",
+        "LEU2CRPGXKW",
+        "LEU2CRPGLFU",
+        "LEU2CRPG2F2",
+        "LEU2CRPGHSL",
+        "LEU2CRPGUR5",
+        "LEU2CRPGVD3",
+    ]
+    duration = "2h"
+
+    with patch("cli.handlers.voucher.input") as mock_input:
+        mock_input.side_effect = ["tests/data/test_vouchers.pdf"]
+        handle_add_vouchers_file(config)
+
+    voucherDB = VoucherDB(config)
+    expected_vouchers = []
+    for code in voucher_codes:
+        expected_vouchers.append(Voucher(code, duration))
+
+    assert voucherDB.get_vouchers() == expected_vouchers
+
+
+def test_handle_list_voucher(config):
+    voucher_codes = [
+        "LEU123",
+        "LEU456",
+    ]
+    voucher_durations = [
+        "1h",
+        "2h",
+    ]
+
+    voucherDB = VoucherDB(config)
+
+    for code, duration in zip(voucher_codes, voucher_durations):
+        voucherDB.add_voucher(code, duration)
+
+    expected_vouch = Voucher("LEU123", "1h")
+    expected_vouch2 = Voucher("LEU456", "2h")
+
+    with patch("sys.stdout", new=io.StringIO()) as dummy_stdout:
+        handle_list_vouchers(config)
+
+        output = dummy_stdout.getvalue().strip()
+        assert expected_vouch.code in output
+        assert expected_vouch2.code in output
+
+
+def test_handle_use_voucher(config):
+    voucher_codes = [
+        "LEU123",
+        "LEU456",
+    ]
+    voucher_durations = [
+        "1h",
+        "2h",
+    ]
+
+    voucherDB = VoucherDB(config)
+
+    for code, duration in zip(voucher_codes, voucher_durations):
+        voucherDB.add_voucher(code, duration)
+
+    handle_use_voucher(config, "LEU123")
+
+    assert voucherDB.get_voucher("LEU123").used is True

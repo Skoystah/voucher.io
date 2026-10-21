@@ -1,7 +1,3 @@
-import unittest
-
-from base import BaseTestClass
-
 from tests.test_data import TEST_USERS
 from user.auth import (
     check_user_password,
@@ -11,28 +7,25 @@ from user.auth import (
 )
 
 
-class Testusers(BaseTestClass):
-    def test_check_correct_pass(self):
-        user = TEST_USERS[1]
+def test_check_correct_pass():
+    user = TEST_USERS[1]
 
-        hashed_password = hash_user_password(user.password)
+    hashed_password = hash_user_password(user.password)
 
-        self.assertTrue(check_user_password(user.password, hashed_password))
-
-    def test_check_incorrect_pass(self):
-        user = TEST_USERS[1]
-        dummy_password = "WrongPassword"
-
-        hashed_password = hash_user_password(user.password)
-
-        self.assertFalse(check_user_password(dummy_password, hashed_password))
-
-    def test_jwt_token(self):
-        user = TEST_USERS[1]
-
-        token = get_jwt_token(user.name, self.config.secret_key, 60)
-        _ = validate_jwt_token(token, self.config.secret_key)
+    assert check_user_password(user.password, hashed_password)
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_check_incorrect_pass():
+    user = TEST_USERS[1]
+    dummy_password = "WrongPassword"
+
+    hashed_password = hash_user_password(user.password)
+
+    assert not check_user_password(dummy_password, hashed_password)
+
+
+def test_jwt_token(config):
+    user = TEST_USERS[1]
+
+    token = get_jwt_token(user.name, config.secret_key, 60)
+    _ = validate_jwt_token(token, config.secret_key)

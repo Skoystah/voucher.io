@@ -37,7 +37,7 @@ jobs:
         run: uv sync --locked --all-extras --dev
 
       - name: Run unit tests
-        run: uv run python3 -m unittest discover tests -v
+        run: uv run pytest tests -v
 
   style:
     name: Style

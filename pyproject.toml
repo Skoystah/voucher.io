@@ -48,6 +48,11 @@ prepend_sys_path = [
     "."
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
 # timezone to use when rendering the date within the migration file
 # as well as the filename.
 # If specified, requires the python>=3.9 or backports.zoneinfo library and tzdata library.
