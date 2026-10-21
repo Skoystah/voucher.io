@@ -18,7 +18,7 @@ class Voucher(Base):
 
     code: Mapped[str] = mapped_column(primary_key=True)
     duration: Mapped[str] = mapped_column(
-        String(2),
+        String(4),
         CheckConstraint("duration in ('1h','2h','4h', '12h')", name="ck_duration"),
     )
     used: Mapped[bool] = mapped_column(
