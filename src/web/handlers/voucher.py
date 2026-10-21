@@ -46,10 +46,7 @@ def create_voucher_router(config: Config):
         duration: Duration | None = None,
     ) -> list[Voucher]:
         if config.auth:
-            print("get vouchers - auth req!")
             _ = auth_user(request, config)
-        else:
-            print("get vouchers - NO auth req!")
 
         used = None
         if not includeUsed:
@@ -82,10 +79,10 @@ def create_voucher_router(config: Config):
         return added_voucher
 
     @router.post("/vouchers/upload-file", status_code=HTTP_201_CREATED)
-    async def add_vouchers_file(file: UploadFile) -> dict:
-        # _ = auth_user(request, config)
+    async def add_vouchers_file(request: Request, file: UploadFile) -> dict:
+        if config.auth:
+            _ = auth_user(request, config)
         voucherDB = VoucherDB(config)
-        print("add_vouchers_file", file)
         file_contents = file.file.read()
 
         if file.filename is None:

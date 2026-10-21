@@ -21,18 +21,13 @@ def main():
     disable_auth = os.getenv("DISABLE_AUTH", "false").lower() == "true"
     environment = os.getenv("ENVIRONMENT", "cloud").lower()
 
-    print ("Disable auth :", disable_auth)
-    print ("Environment :", environment)
-
     if secret_key is None:
         raise Exception("Secret key is missing")
 
     if db_url is None:
         raise Exception("DB Url is missing")
 
-    
     use_ssl = environment != "local"
-    print("Use ssl ", use_ssl)
 
     args = sys.argv
 
