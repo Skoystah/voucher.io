@@ -1,4 +1,5 @@
 from cli import clicommands
+from cli.handlers.exit import handle_exit
 from config import Config
 
 
@@ -10,7 +11,18 @@ def start(config: Config) -> None:
     while True:
         print(">", end=" ")
 
-        ipt = input().split(" ")
+        try:
+            line = input()
+        except (EOFError, KeyboardInterrupt):
+            # ^D and ^C should end the session, not dump a traceback.
+            print()
+            handle_exit(config)
+            return
+
+        ipt = line.strip().split(" ")
+
+        if ipt == [""]:
+            continue
 
         command = ipt[0]
         args = []
