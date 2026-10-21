@@ -1,5 +1,4 @@
-
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -67,17 +66,22 @@ class DB:
 
     def use_voucher(self, code: str) -> Voucher:
         with Session(self.engine) as session:
-            voucher = session.get(Voucher, code)
-            if voucher is None:
-                raise KeyError("Voucher does not exist")
-
-            if voucher.used:
-                raise ValueError("Voucher was already used")
-
-            voucher.used = True
+            # Single guarded UPDATE so two concurrent requests can never both
+            # redeem the same code (read-then-write would allow a double spend).
+            result = session.execute(
+                update(Voucher)
+                .where(Voucher.code == code, Voucher.used == False)
+                .values(used=True)
+            )
             session.commit()
 
-            return voucher
+            if result.rowcount == 0:
+                # Distinguish "never existed" from "already used" for callers.
+                if session.get(Voucher, code) is None:
+                    raise KeyError("Voucher does not exist")
+                raise ValueError("Voucher was already used")
+
+            return session.get(Voucher, code)
 
     def delete_voucher(self, code: str) -> None:
         with Session(self.engine) as session:
